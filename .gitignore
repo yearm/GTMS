@@ -5,3 +5,4 @@ lastupdate.tmp
 *.DS_Store
 conf/*.ini
 conf/*.conf
+build.sh
