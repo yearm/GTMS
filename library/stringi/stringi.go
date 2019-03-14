@@ -1,6 +1,7 @@
 package stringi
 
 import (
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -21,4 +22,14 @@ func Build(s string, bind Form) (str string) {
 func ToInt(str string) int {
 	i, _ := strconv.Atoi(str)
 	return i
+}
+
+// 字符串模板
+func Template(tpl string, args ...string) string {
+	re := regexp.MustCompile(`{{.*?}}`)
+	i := -1
+	return re.ReplaceAllStringFunc(tpl, func(s string) string {
+		i++
+		return args[i]
+	})
 }

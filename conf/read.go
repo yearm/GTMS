@@ -21,14 +21,14 @@ func getKey(conf *ini.File, sec string, key string) (k *ini.Key) {
 
 //加载配置文件
 func LoadingConf() {
-	ROOT_PATH := helper.GetRootPath()
+	rootPath := helper.GetRootPath()
 	jsoniter.ConfigDefault = jsoniter.Config{EscapeHTML: false}.Froze() // 禁止HTML转义
-	env, _ := ini.Load(ROOT_PATH + "/conf/app.conf")
+	env, _ := ini.Load(rootPath + "/conf/app.conf")
 	runMode := getKey(env, "", "runmode").String()
 	if runMode == "prod" {
-		cfg, _ = ini.Load(ROOT_PATH + "/conf/app_prod.ini")
+		cfg, _ = ini.Load(rootPath + "/conf/app_prod.ini")
 	} else if runMode == "dev" {
-		cfg, _ = ini.Load(ROOT_PATH + "/conf/app_dev.ini")
+		cfg, _ = ini.Load(rootPath + "/conf/app_dev.ini")
 		orm.Debug = true //打印SQL
 	}
 }
