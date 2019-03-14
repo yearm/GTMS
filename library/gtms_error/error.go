@@ -14,7 +14,7 @@ var (
 
 func init() {
 	rootPath := helper.GetRootPath()
-	errFile, err = ini.Load(rootPath + "conf/err/error.ini")
+	errFile, err = ini.Load(rootPath + "/conf/err/error.ini")
 	if err != nil {
 		panic("load error.ini failed")
 	}

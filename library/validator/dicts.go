@@ -13,7 +13,7 @@ var (
 
 func init() {
 	rootPath := helper.GetRootPath()
-	dicts, err = ini.Load(rootPath + "conf/err/validator.ini")
+	dicts, err = ini.Load(rootPath + "/conf/err/validator.ini")
 	if err != nil {
 		panic("load validator.ini failed")
 	}
