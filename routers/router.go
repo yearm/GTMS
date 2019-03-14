@@ -1,10 +1,10 @@
 package routers
 
 import (
-	"GTMS/controllers"
+	"GTMS/v1/index"
 	"github.com/astaxie/beego"
 )
 
 func init() {
-    beego.Router("/", &controllers.MainController{})
+	beego.Router("/", &index.MainController{}, "get:Index")
 }
