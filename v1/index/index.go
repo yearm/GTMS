@@ -1,15 +1,16 @@
 package index
 
 import (
-	"github.com/astaxie/beego"
+	"GTMS/library/controller"
+	"GTMS/library/helper"
 )
 
 type MainController struct {
-	beego.Controller
+	controller.BaseController
 }
 
-func (c *MainController) Index() {
-	c.Data["Website"] = "beego.me"
-	c.Data["Email"] = "astaxie@gmail.com"
-	c.TplName = "index.tpl"
+func (this *MainController) Index() {
+	this.SuccessWithData(helper.JSON{
+		"hello": "world",
+	})
 }
