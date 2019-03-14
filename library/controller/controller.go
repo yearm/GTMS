@@ -9,6 +9,7 @@ import (
 
 type BaseController struct {
 	beego.Controller
+	Request
 }
 
 func (this *BaseController) JSON(code int, v interface{}) {
@@ -20,7 +21,7 @@ func (this *BaseController) JSON(code int, v interface{}) {
 func (this *BaseController) SuccessWithData(data interface{}) {
 	this.JSON(http.StatusOK, helper.JSON{
 		"status": helper.JSON{
-			"code":              "0",
+			"code":              0,
 			"message":           "success",
 			"time":              helper.Date("Y-m-d H:i:s"),
 			"accessTokenStatus": "keep",
@@ -31,7 +32,7 @@ func (this *BaseController) SuccessWithData(data interface{}) {
 func (this *BaseController) SuccessWithDataList(datalist interface{}, pageInfo interface{}) {
 	this.JSON(http.StatusOK, helper.JSON{
 		"status": helper.JSON{
-			"code":              "0",
+			"code":              0,
 			"message":           "success",
 			"time":              helper.Date("Y-m-d H:i:s"),
 			"accessTokenStatus": "keep",
@@ -43,14 +44,7 @@ func (this *BaseController) SuccessWithDataList(datalist interface{}, pageInfo i
 	})
 }
 
-func (this *BaseController) Getstring(k string) string {
-	query := this.Ctx.Request.URL.Query()
-	if v := query.Get(k); v != "" {
-		return v
-	}
-	return this.Ctx.Request.PostForm.Get(k)
-}
-
+//解析参数
 func (this *BaseController) ParseInput(obj interface{}) *validator.Error {
 	err := beego.ParseForm(this.Input(), obj)
 	if err != nil {
@@ -60,4 +54,21 @@ func (this *BaseController) ParseInput(obj interface{}) *validator.Error {
 		}
 	}
 	return validator.Check(obj)
+}
+
+func (this *BaseController) ErrorResponse(err *validator.Error, datas ...helper.JSON) {
+	var data = helper.JSON{}
+	if len(datas) > 0 {
+		data = datas[0]
+	}
+
+	this.JSON(http.StatusOK, helper.JSON{
+		"status": helper.JSON{
+			"code":             err.Code,
+			"message":          err.Msg,
+			"time":             helper.Date("Y-m-d H:i:s"),
+			"accessTokenState": "keep",
+		},
+		"data": data,
+	})
 }

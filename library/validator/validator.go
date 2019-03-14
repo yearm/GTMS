@@ -100,7 +100,7 @@ func setValue(field reflect.Value, v string) {
 }
 
 type Error struct {
-	Code int64  `json:"code"`
+	Code int    `json:"code"`
 	Msg  string `json:"msg"`
 }
 
