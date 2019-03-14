@@ -36,7 +36,7 @@ func getErrorTemplate(tpl string) *validator.Error {
 	cfg := errFile
 	section, _ := cfg.GetSection(tpl)
 	tmp, _ := section.GetKey("code")
-	code, _ := tmp.Int64()
+	code, _ := tmp.Int()
 	msg, _ := section.GetKey("msg")
 	return &validator.Error{
 		Code: code,
