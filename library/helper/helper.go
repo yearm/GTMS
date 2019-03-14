@@ -85,6 +85,7 @@ func ToFloat64(value interface{}) (float64, error) {
 	return 0, errors.New(" only support int, int64, float32, float64")
 }
 
+//转驼峰
 func ToCamel(s string) string {
 	b := []byte(s)
 	if b[0] >= 'A' && b[0] <= 'Z' {

@@ -6,3 +6,4 @@ lastupdate.tmp
 conf/*.ini
 conf/*.conf
 build.sh
+gtms_go
