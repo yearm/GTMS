@@ -1,10 +1,19 @@
 package controller
 
 import (
+	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
+	"GTMS/library/stringi"
 	"GTMS/library/validator"
 	"github.com/astaxie/beego"
+	"mime/multipart"
 	"net/http"
+	"strconv"
+)
+
+const (
+	default_page      = "1"
+	default_pageCount = "10"
 )
 
 type BaseController struct {
@@ -29,6 +38,7 @@ func (this *BaseController) SuccessWithData(data interface{}) {
 		"data": data,
 	})
 }
+
 func (this *BaseController) SuccessWithDataList(datalist interface{}, pageInfo interface{}) {
 	this.JSON(http.StatusOK, helper.JSON{
 		"status": helper.JSON{
@@ -61,7 +71,6 @@ func (this *BaseController) ErrorResponse(err *validator.Error, datas ...helper.
 	if len(datas) > 0 {
 		data = datas[0]
 	}
-
 	this.JSON(http.StatusOK, helper.JSON{
 		"status": helper.JSON{
 			"code":             err.Code,
@@ -71,4 +80,30 @@ func (this *BaseController) ErrorResponse(err *validator.Error, datas ...helper.
 		},
 		"data": data,
 	})
+}
+
+//获取分页参数
+func (this *BaseController) GetPageInfo(page int, pageCount int) {
+	pageStr := this.GetString("page")
+	pageCountStr := this.GetString("pageCount")
+	pageStr = stringi.DefaultValue(pageStr, default_page)
+	pageCountStr = stringi.DefaultValue(pageCountStr, default_pageCount)
+	page, err1 := strconv.Atoi(pageStr)
+	pageCount, err2 := strconv.Atoi(pageCountStr)
+	if err1 != nil || err2 != nil || page < 0 || pageCount < 0 {
+		err := gtms_error.GetError("page_info_error")
+		this.ErrorResponse(err)
+		this.StopRun()
+	}
+	return
+}
+
+//获取文件
+func (this *BaseController) GetFiles(key string) ([]*multipart.FileHeader, error) {
+	if this.Ctx.Request.MultipartForm != nil {
+		if files, ok := this.Ctx.Request.MultipartForm.File[key]; ok {
+			return files, nil
+		}
+	}
+	return nil, http.ErrMissingFile
 }

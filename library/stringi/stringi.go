@@ -33,3 +33,16 @@ func Template(tpl string, args ...string) string {
 		return args[i]
 	})
 }
+
+func IsEmpty(str string) bool {
+	str = strings.TrimSpace(str)
+	return (str == "") || (str == "0")
+}
+
+func DefaultValue(s string, val string) string {
+	if IsEmpty(s) {
+		return val
+	} else {
+		return s
+	}
+}
