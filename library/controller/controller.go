@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
@@ -83,7 +82,7 @@ func (this *BaseController) ErrorResponse(err *validator.Error, datas ...helper.
 }
 
 //获取分页参数
-func (this *BaseController) GetPageInfo(page int, pageCount int) {
+func (this *BaseController) GetPageInfo() (page int, pageCount int) {
 	pageStr := this.GetString("page")
 	pageCountStr := this.GetString("pageCount")
 	pageStr = stringi.DefaultValue(pageStr, default_page)
@@ -91,19 +90,16 @@ func (this *BaseController) GetPageInfo(page int, pageCount int) {
 	page, err1 := strconv.Atoi(pageStr)
 	pageCount, err2 := strconv.Atoi(pageCountStr)
 	if err1 != nil || err2 != nil || page < 0 || pageCount < 0 {
-		err := gtms_error.GetError("page_info_error")
-		this.ErrorResponse(err)
-		this.StopRun()
+		return stringi.ToInt(default_page), stringi.ToInt(default_pageCount)
 	}
 	return
 }
 
-//获取文件
-func (this *BaseController) GetFiles(key string) ([]*multipart.FileHeader, error) {
-	if this.Ctx.Request.MultipartForm != nil {
-		if files, ok := this.Ctx.Request.MultipartForm.File[key]; ok {
-			return files, nil
-		}
+//获取上传文件
+func (this *BaseController) GetFile(k string) (*multipart.FileHeader, bool) {
+	files, exist := this.Ctx.Request.MultipartForm.File[k]
+	if !exist || len(files) == 0 {
+		return nil, false
 	}
-	return nil, http.ErrMissingFile
+	return files[0], true
 }
