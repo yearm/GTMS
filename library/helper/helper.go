@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/json-iterator/go"
+	"github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 	"math/big"
 	"os"
@@ -121,4 +122,10 @@ func HashedPassword(password string) (string, error) {
 func CheckHashedPassword(hashedPassword string, password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	return err == nil
+}
+
+//创建token
+func CreateToken() (token string) {
+	token = uuid.NewV4().String()
+	return
 }

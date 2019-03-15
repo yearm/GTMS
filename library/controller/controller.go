@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
@@ -65,6 +66,7 @@ func (this *BaseController) ParseInput(obj interface{}) *validator.Error {
 	return validator.Check(obj)
 }
 
+//错误Response
 func (this *BaseController) ErrorResponse(err *validator.Error, datas ...helper.JSON) {
 	var data = helper.JSON{}
 	if len(datas) > 0 {
@@ -78,6 +80,24 @@ func (this *BaseController) ErrorResponse(err *validator.Error, datas ...helper.
 			"accessTokenState": "keep",
 		},
 		"data": data,
+	})
+}
+
+//重新登录
+func (this *BaseController) RequireSignin() {
+	user := this.Request.User
+	errKey := user.ErrorKey
+	if stringi.IsEmpty(errKey) {
+		errKey = "required_login"
+	}
+	errorMsg := gtms_error.GetError(errKey)
+	this.JSON(http.StatusOK, helper.JSON{
+		"status": helper.JSON{
+			"code":             errorMsg.Code,
+			"message":          errorMsg.Msg,
+			"time":             helper.Date("Y-m-d H:i:s"),
+			"accessTokenState": "refresh",
+		},
 	})
 }
 

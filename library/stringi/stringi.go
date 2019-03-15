@@ -46,3 +46,25 @@ func DefaultValue(s string, val string) string {
 		return s
 	}
 }
+
+func Swap(a string, b string) (string, string) {
+	return b, a
+}
+
+//反转切片
+func Reverse(arr []string) {
+	var n int
+	var length = len(arr)
+	n = length / 2
+	for i := 0; i < n; i++ {
+		arr[i], arr[length-1-i] = Swap(arr[i], arr[length-1-i])
+	}
+}
+
+//转义引号
+func AddSlashes(str string) string {
+	str = strings.Replace(str, "'", "\\'", -1)
+	str = strings.Replace(str, "\"", "\\\"", -1)
+	str = strings.Replace(str, "`", "\\`", -1)
+	return str
+}
