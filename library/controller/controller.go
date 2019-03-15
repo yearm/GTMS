@@ -12,7 +12,7 @@ import (
 
 const (
 	default_page      = "1"
-	default_pageCount = "10"
+	default_pageCount = "30"
 )
 
 type BaseController struct {

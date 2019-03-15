@@ -3,10 +3,12 @@ package helper
 import (
 	"GTMS/library/stringi"
 	"crypto/rand"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/json-iterator/go"
+	"golang.org/x/crypto/bcrypt"
 	"math/big"
 	"os"
 	"path/filepath"
@@ -92,4 +94,31 @@ func ToCamel(s string) string {
 		b[0] += 32
 	}
 	return string(b)
+}
+
+//base64加密
+func Base64Encode(str string) string {
+	var in = []byte(str)
+	return base64.StdEncoding.EncodeToString(in)
+}
+
+//base64解密
+func Base64Decode(str string) string {
+	bytes, err := base64.StdEncoding.DecodeString(str)
+	if err != nil {
+		return ""
+	}
+	return string(bytes)
+}
+
+//bcrypt加密密码
+func HashedPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
+
+//bcrypt校验密码
+func CheckHashedPassword(hashedPassword string, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	return err == nil
 }
