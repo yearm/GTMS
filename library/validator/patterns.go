@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"GTMS/library/helper"
+	"GTMS/library/stringi"
 	"github.com/pkg/errors"
 	"reflect"
 	"regexp"
@@ -148,7 +148,7 @@ func min(s string, value interface{}) (bool, error) {
 		return false, errors.New(" tag error")
 	}
 
-	v, err2 := helper.ToFloat64(value)
+	v, err2 := stringi.ToFloat64(value)
 	if err2 != nil {
 		return false, errors.New("min" + err2.Error())
 	}
@@ -162,7 +162,7 @@ func max(s string, value interface{}) (bool, error) {
 		return false, errors.New(" tag error")
 	}
 
-	v, err2 := helper.ToFloat64(value)
+	v, err2 := stringi.ToFloat64(value)
 	if err2 != nil {
 		return false, errors.New("max" + err2.Error())
 	}

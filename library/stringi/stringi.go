@@ -1,6 +1,8 @@
 package stringi
 
 import (
+	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -67,4 +69,54 @@ func AddSlashes(str string) string {
 	str = strings.Replace(str, "\"", "\\\"", -1)
 	str = strings.Replace(str, "`", "\\`", -1)
 	return str
+}
+
+func ToFloat64(value interface{}) (float64, error) {
+	v1, ok := value.(int)
+	if ok {
+		return float64(v1), nil
+	}
+
+	v2, ok := value.(int64)
+	if ok {
+		return float64(v2), nil
+	}
+
+	v3, ok := value.(float32)
+	if ok {
+		return float64(v3), nil
+	}
+
+	v4, ok := value.(float64)
+	if ok {
+		return float64(v4), nil
+	}
+	return 0, errors.New(" only support int, int64, float32, float64")
+}
+
+func ToString(v interface{}) string {
+	var s = ""
+	if v == nil {
+		return s
+	} else if f, ok := v.(string); ok {
+		s = f
+	} else if f, ok := v.(int64); ok {
+		s = ToString(f)
+	} else if f, ok := v.(float64); ok {
+		s = fmt.Sprintf("%.6f", f)
+		re, _ := regexp.Compile(`\.*[0]+$`)
+		s = re.ReplaceAllString(s, "")
+	} else {
+		panic("val only supports int, int64, float, string type")
+	}
+	return s
+}
+
+func ArrayValues(form Form, keys []string) []string {
+	var result []string
+	for _, key := range keys {
+		s := ToString(form[key])
+		result = append(result, AddSlashes(s))
+	}
+	return result
 }

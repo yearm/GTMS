@@ -101,6 +101,27 @@ func InsertSQL(tableName string, data stringi.Form) string {
 	return BuildSQL(sql, data)
 }
 
+func InsertAllSQL(tableName string, data []stringi.Form) string {
+	var keys []string
+	for key, _ := range data[0] {
+		keys = append(keys, key)
+	}
+	var keyString = strings.Join(keys, ", ")
+	var vals []string
+	for _, item := range data {
+		var str = "('" + strings.Join(stringi.ArrayValues(item, keys), "', '") + "')"
+		vals = append(vals, str)
+	}
+	var values = strings.Join(vals, ", ")
+	var sql = "INSERT INTO {tableName} ({keys}) VALUES {values}"
+	sql = stringi.Build(sql, stringi.Form{
+		"tableName": tableName,
+		"keys":      keyString,
+		"values":    values,
+	})
+	return sql
+}
+
 func ReplaceSQL(tableName string, data stringi.Form) string {
 	var keys []string
 	var values []string

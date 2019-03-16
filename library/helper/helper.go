@@ -4,7 +4,6 @@ import (
 	"GTMS/library/stringi"
 	"crypto/rand"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"github.com/astaxie/beego/logs"
 	"github.com/json-iterator/go"
@@ -63,29 +62,6 @@ func Date(format string, timestamp ...int64) string {
 func MustMarshal(v interface{}) []byte {
 	b, _ := jsoniter.Marshal(v)
 	return b
-}
-
-func ToFloat64(value interface{}) (float64, error) {
-	v1, ok := value.(int)
-	if ok {
-		return float64(v1), nil
-	}
-
-	v2, ok := value.(int64)
-	if ok {
-		return float64(v2), nil
-	}
-
-	v3, ok := value.(float32)
-	if ok {
-		return float64(v3), nil
-	}
-
-	v4, ok := value.(float64)
-	if ok {
-		return float64(v4), nil
-	}
-	return 0, errors.New(" only support int, int64, float32, float64")
 }
 
 //转驼峰
