@@ -8,8 +8,11 @@ import (
 	"github.com/json-iterator/go"
 )
 
-var cfg *ini.File
-var env *ini.File
+var (
+	cfg     *ini.File
+	env     *ini.File
+	RunMode string
+)
 
 func getKey(conf *ini.File, sec string, key string) (k *ini.Key) {
 	k, err := conf.Section(sec).GetKey(key)
@@ -24,10 +27,10 @@ func LoadingConf() {
 	rootPath := helper.GetRootPath()
 	jsoniter.ConfigDefault = jsoniter.Config{EscapeHTML: false}.Froze() // 禁止HTML转义
 	env, _ := ini.Load(rootPath + "/conf/app.conf")
-	runMode := getKey(env, "", "runmode").String()
-	if runMode == "prod" {
+	RunMode = getKey(env, "", "runmode").String()
+	if RunMode == "prod" {
 		cfg, _ = ini.Load(rootPath + "/conf/app_prod.ini")
-	} else if runMode == "dev" {
+	} else if RunMode == "dev" {
 		cfg, _ = ini.Load(rootPath + "/conf/app_dev.ini")
 		orm.Debug = true //打印SQL
 	}
