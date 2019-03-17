@@ -3,8 +3,10 @@ package student_account
 import (
 	"GTMS/boot"
 	"GTMS/library/controller"
+	"GTMS/library/db"
 	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
+	"GTMS/library/stringi"
 	"GTMS/library/validator"
 	"GTMS/v1/account"
 	"github.com/astaxie/beego/orm"
@@ -61,8 +63,17 @@ func SignIn(opt *account.SignInForm) (*controller.Session, *validator.Error) {
 			EntryDate:    stu.EntryDate,
 			Education:    stu.Education,
 		}
-		s, _ := jsoniter.MarshalToString(stuInfo)
-		boot.CACHE.Set(accessToken, s, time.Hour*24*30)
+		go func() {
+			//开协程写redis、写user_session表
+			s, _ := jsoniter.MarshalToString(stuInfo)
+			boot.CACHE.Set(accessToken, s, time.Hour*24*30)
+			db.Exec(db.ReplaceSQL("user_session", stringi.Form{
+				"uid":         stu.StuId,
+				"token":       accessToken,
+				"role":        "admin",
+				"update_time": helper.Date("Y-m-d H:i:s"),
+			}))
+		}()
 		return &controller.Session{
 			AccessToken: accessToken,
 			IsGuest:     false,
