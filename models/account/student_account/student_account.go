@@ -8,6 +8,7 @@ import (
 	"GTMS/library/validator"
 	"GTMS/v1/account"
 	"github.com/astaxie/beego/orm"
+	"github.com/json-iterator/go"
 	"time"
 )
 
@@ -42,29 +43,32 @@ func SignIn(opt *account.SignInForm) (*controller.Session, *validator.Error) {
 	o.Read(&stu)
 	if helper.CheckHashedPassword(stu.Pwd, opt.Password) {
 		accessToken := helper.CreateToken()
+		stuInfo := controller.StuInfo{
+			StuId:        stu.StuId,
+			StuNo:        stu.StuNo,
+			StuName:      stu.StuName,
+			StuSex:       stu.StuSex,
+			IdCard:       stu.IdCard,
+			Birthplace:   stu.Birthplace,
+			Department:   stu.Department,
+			Major:        stu.Major,
+			Class:        stu.Class,
+			Phone:        stu.Phone,
+			QQ:           stu.QQ,
+			Email:        stu.Email,
+			WeChat:       stu.WeChat,
+			SchoolSystem: stu.SchoolSystem,
+			EntryDate:    stu.EntryDate,
+			Education:    stu.Education,
+		}
+		s, _ := jsoniter.MarshalToString(stuInfo)
+		boot.CACHE.Set(accessToken, s, time.Hour*24*30)
 		return &controller.Session{
 			AccessToken: accessToken,
 			IsGuest:     false,
 			Role:        "student",
 			UpdateTime:  time.Now().Unix(),
-			StuInfo: controller.StuInfo{
-				StuId:        stu.StuId,
-				StuNo:        stu.StuNo,
-				StuName:      stu.StuName,
-				StuSex:       stu.StuSex,
-				IdCard:       stu.IdCard,
-				Birthplace:   stu.Birthplace,
-				Department:   stu.Department,
-				Major:        stu.Major,
-				Class:        stu.Class,
-				Phone:        stu.Phone,
-				QQ:           stu.QQ,
-				Email:        stu.Email,
-				WeChat:       stu.WeChat,
-				SchoolSystem: stu.SchoolSystem,
-				EntryDate:    stu.EntryDate,
-				Education:    stu.Education,
-			},
+			StuInfo:     stuInfo,
 		}, &validator.Error{}
 	} else {
 		return nil, gtms_error.GetError("sign_in_error")

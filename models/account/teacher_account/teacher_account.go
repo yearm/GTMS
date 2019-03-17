@@ -8,6 +8,7 @@ import (
 	"GTMS/library/validator"
 	"GTMS/v1/account"
 	"github.com/astaxie/beego/orm"
+	"github.com/json-iterator/go"
 	"time"
 )
 
@@ -40,27 +41,30 @@ func SignIn(opt *account.SignInForm) (*controller.Session, *validator.Error) {
 	o.Read(&tech)
 	if helper.CheckHashedPassword(tech.Pwd, opt.Password) {
 		accessToken := helper.CreateToken()
+		techInfo := controller.TechInfo{
+			TechId:            tech.TechId,
+			TechName:          tech.TechName,
+			TechSex:           tech.TechSex,
+			Education:         tech.Education,
+			Degree:            tech.Degree,
+			ResearchDirection: tech.ResearchDirection,
+			JobTitle:          tech.JobTitle,
+			Job:               tech.Job,
+			InstructNums:      tech.InstructNums,
+			InstructMajor:     tech.InstructMajor,
+			Email:             tech.Email,
+			Phone:             tech.Phone,
+			QQ:                tech.QQ,
+			WeChat:            tech.WeChat,
+		}
+		s, _ := jsoniter.MarshalToString(techInfo)
+		boot.CACHE.Set(accessToken, s, time.Hour*24*30)
 		return &controller.Session{
 			AccessToken: accessToken,
 			IsGuest:     false,
 			Role:        "teacher",
 			UpdateTime:  time.Now().Unix(),
-			TechInfo: controller.TechInfo{
-				TechId:            tech.TechId,
-				TechName:          tech.TechName,
-				TechSex:           tech.TechSex,
-				Education:         tech.Education,
-				Degree:            tech.Degree,
-				ResearchDirection: tech.ResearchDirection,
-				JobTitle:          tech.JobTitle,
-				Job:               tech.Job,
-				InstructNums:      tech.InstructNums,
-				InstructMajor:     tech.InstructMajor,
-				Email:             tech.Email,
-				Phone:             tech.Phone,
-				QQ:                tech.QQ,
-				WeChat:            tech.WeChat,
-			},
+			TechInfo:    techInfo,
 		}, &validator.Error{}
 	} else {
 		return nil, gtms_error.GetError("sign_in_error")

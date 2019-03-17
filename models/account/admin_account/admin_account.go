@@ -8,6 +8,7 @@ import (
 	"GTMS/library/validator"
 	"GTMS/v1/account"
 	"github.com/astaxie/beego/orm"
+	"github.com/json-iterator/go"
 	"time"
 )
 
@@ -29,16 +30,19 @@ func SignIn(opt *account.SignInForm) (*controller.Session, *validator.Error) {
 	o.Read(&admin)
 	if helper.CheckHashedPassword(admin.Pwd, opt.Password) {
 		accessToken := helper.CreateToken()
+		adminInfo := controller.AdminInfo{
+			AdminId:   admin.AdminId,
+			AdminName: admin.AdminName,
+			AdminSex:  admin.AdminSex,
+		}
+		s, _ := jsoniter.MarshalToString(adminInfo)
+		boot.CACHE.Set(accessToken, s, time.Hour*24*30)
 		return &controller.Session{
 			AccessToken: accessToken,
 			IsGuest:     false,
 			Role:        "admin",
 			UpdateTime:  time.Now().Unix(),
-			AdminInfo: controller.AdminInfo{
-				AdminId:   admin.AdminId,
-				AdminName: admin.AdminName,
-				AdminSex:  admin.AdminSex,
-			},
+			AdminInfo:   adminInfo,
 		}, &validator.Error{}
 	} else {
 		return nil, gtms_error.GetError("sign_in_error")
