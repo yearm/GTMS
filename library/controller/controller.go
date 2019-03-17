@@ -1,11 +1,13 @@
 package controller
 
 import (
+	"GTMS/boot"
 	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
 	"github.com/astaxie/beego"
+	"github.com/json-iterator/go"
 	"mime/multipart"
 	"net/http"
 	"strconv"
@@ -84,7 +86,7 @@ func (this *BaseController) ErrorResponse(err *validator.Error, datas ...helper.
 }
 
 //重新登录
-func (this *BaseController) RequireSignin() {
+func (this *BaseController) RequireLogin() {
 	user := this.Request.User
 	errKey := user.ErrorKey
 	if stringi.IsEmpty(errKey) {
@@ -99,6 +101,19 @@ func (this *BaseController) RequireSignin() {
 			"accessTokenState": "refresh",
 		},
 	})
+}
+
+//根据token获取用户
+func (this *BaseController) GetUser(accessToken string) *Session {
+	var user = &Session{IsGuest: true}
+	if stringi.IsEmpty(accessToken) {
+		return user
+	}
+	str, redisError := boot.CACHE.Get(accessToken).Result()
+	if len(str) > 0 && redisError == nil {
+		jsoniter.UnmarshalFromString(str, user)
+	}
+	return user
 }
 
 //获取分页参数

@@ -32,29 +32,37 @@ func Login(opt *account.SignInForm) (*controller.Session, *validator.Error) {
 	o.Read(&admin)
 	if helper.CheckHashedPassword(admin.Pwd, opt.Password) {
 		accessToken := helper.CreateToken()
-		adminInfo := controller.AdminInfo{
-			AdminId:   admin.AdminId,
-			AdminName: admin.AdminName,
-			AdminSex:  admin.AdminSex,
+		user := controller.Session{
+			AccessToken: accessToken,
+			IsGuest:     false,
+			Role:        controller.ROLE_ADMIN,
+			ErrorKey:    "",
+			UpdateTime:  time.Now().Unix(),
+			AdminInfo: controller.AdminInfo{
+				AdminId:   admin.AdminId,
+				AdminName: admin.AdminName,
+				AdminSex:  admin.AdminSex,
+			},
 		}
+		s, _ := jsoniter.MarshalToString(user)
+		boot.CACHE.Set(accessToken, s, time.Hour*24*30)
 		go func() {
-			//开协程写redis、写user_session表
-			s, _ := jsoniter.MarshalToString(adminInfo)
-			boot.CACHE.Set(accessToken, s, time.Hour*24*30)
+			//删除旧token
+			sql := `SELECT token FROM user_session WHERE uid = :uid`
+			var token string
+			db.QueryRow(sql, stringi.Form{
+				"uid": admin.AdminId,
+			}, &token)
+			boot.CACHE.Del(token).Result()
+			//更新user_session表
 			db.Exec(db.ReplaceSQL("user_session", stringi.Form{
 				"uid":         admin.AdminId,
 				"token":       accessToken,
-				"role":        "admin",
+				"role":        controller.ROLE_ADMIN,
 				"update_time": helper.Date("Y-m-d H:i:s"),
 			}))
 		}()
-		return &controller.Session{
-			AccessToken: accessToken,
-			IsGuest:     false,
-			Role:        "admin",
-			UpdateTime:  time.Now().Unix(),
-			AdminInfo:   adminInfo,
-		}, &validator.Error{}
+		return &user, &validator.Error{}
 	} else {
 		return nil, gtms_error.GetError("sign_in_error")
 	}

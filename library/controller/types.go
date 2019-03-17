@@ -4,6 +4,12 @@ import (
 	"github.com/astaxie/beego/context"
 )
 
+const (
+	ROLE_ADMIN   = "admin"
+	ROLE_TEACHER = "teacher"
+	ROLE_STUDENT = "student"
+)
+
 type Request struct {
 	User    *Session
 	Context *context.Context
