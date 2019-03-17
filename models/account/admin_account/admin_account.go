@@ -1,26 +1,45 @@
 package admin_account
 
 import (
+	"GTMS/boot"
 	"GTMS/library/controller"
-	"GTMS/library/db"
 	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
-	"GTMS/library/stringi"
 	"GTMS/library/validator"
 	"GTMS/v1/account"
+	"github.com/astaxie/beego/orm"
+	"time"
 )
 
+type Admin struct {
+	AdminId   string `orm:"pk"`
+	Pwd       string
+	AdminName string
+	AdminSex  string
+}
+
+func init() {
+	//需要在init中注册定义的model
+	orm.RegisterModel(new(Admin))
+}
+
 func SignIn(opt *account.SignInForm) (*controller.Session, *validator.Error) {
-	sal := `SELECT pwd FROM admin WHERE admin_id = :account`
-	qs := struct {
-		Pwd string
-	}{}
-	db.QueryRow(sal, stringi.Form{
-		"account": opt.Account,
-	}, &qs)
-	b := helper.CheckHashedPassword(qs.Pwd, opt.Password)
-	if b {
-		return &controller.Session{}, &validator.Error{}
+	o := boot.GetSlaveMySQL()
+	admin := Admin{AdminId: opt.Account}
+	o.Read(&admin)
+	if helper.CheckHashedPassword(admin.Pwd, opt.Password) {
+		accessToken := helper.CreateToken()
+		return &controller.Session{
+			AccessToken: accessToken,
+			IsGuest:     false,
+			Role:        "admin",
+			UpdateTime:  time.Now().Unix(),
+			AdminInfo: controller.AdminInfo{
+				AdminId:   admin.AdminId,
+				AdminName: admin.AdminName,
+				AdminSex:  admin.AdminSex,
+			},
+		}, &validator.Error{}
 	} else {
 		return nil, gtms_error.GetError("sign_in_error")
 	}

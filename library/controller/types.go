@@ -17,7 +17,7 @@ type Session struct {
 	UpdateTime  int64  `json:"updateTime"`
 	AdminInfo   `json:"adminInfo"`
 	TechInfo    `json:"techInfo"`
-	StuInfo     `json:"userInfo"`
+	StuInfo     `json:"stuInfo"`
 }
 
 type AdminInfo struct {

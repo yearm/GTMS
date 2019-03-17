@@ -13,9 +13,8 @@ type AdminAccountController struct {
 //管理员登录
 func (this *AdminAccountController) SignIn() {
 	inputs := account.SignInForm{}
-	e := this.ParseInput(&inputs)
-	if e.Code != 0 {
-		this.ErrorResponse(e)
+	if err := this.ParseInput(&inputs); err.Code != 0 {
+		this.ErrorResponse(err)
 		return
 	}
 	session, err := admin_account.SignIn(&inputs)
