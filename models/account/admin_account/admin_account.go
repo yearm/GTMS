@@ -26,7 +26,7 @@ func init() {
 	orm.RegisterModel(new(Admin))
 }
 
-func SignIn(opt *account.SignInForm) (*controller.Session, *validator.Error) {
+func Login(opt *account.SignInForm) (*controller.Session, *validator.Error) {
 	o := boot.GetSlaveMySQL()
 	admin := Admin{AdminId: opt.Account}
 	o.Read(&admin)

@@ -11,13 +11,13 @@ type AdminAccountController struct {
 }
 
 //管理员登录
-func (this *AdminAccountController) SignIn() {
+func (this *AdminAccountController) Login() {
 	inputs := account.SignInForm{}
 	if err := this.ParseInput(&inputs); err.Code != 0 {
 		this.ErrorResponse(err)
 		return
 	}
-	session, err := admin_account.SignIn(&inputs)
+	session, err := admin_account.Login(&inputs)
 	if err.Code != 0 {
 		this.ErrorResponse(err)
 		return

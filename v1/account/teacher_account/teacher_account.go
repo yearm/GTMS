@@ -10,13 +10,13 @@ type TeacherAccountController struct {
 	controller.BaseController
 }
 
-func (this *TeacherAccountController) SignIn() {
+func (this *TeacherAccountController) Login() {
 	inputs := account.SignInForm{}
 	if err := this.ParseInput(&inputs); err.Code != 0 {
 		this.ErrorResponse(err)
 		return
 	}
-	session, err := teacher_account.SignIn(&inputs)
+	session, err := teacher_account.Login(&inputs)
 	if err.Code != 0 {
 		this.ErrorResponse(err)
 		return
