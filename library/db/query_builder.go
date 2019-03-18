@@ -150,3 +150,16 @@ func DeleteSQL(tableName string, field string, data []string) string {
 	})
 	return sql
 }
+
+// 设置新数据
+func Set(data stringi.Form) string {
+	var arr = make([]string, 0)
+	for k, v := range data {
+		var item = stringi.Build("{k} = '{v}'", stringi.Form{
+			"k": k,
+			"v": stringi.AddSlashes(v),
+		})
+		arr = append(arr, item)
+	}
+	return strings.Join(arr, ", ")
+}

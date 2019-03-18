@@ -2,6 +2,8 @@ package admin_account
 
 import (
 	"GTMS/library/controller"
+	"GTMS/library/gtms_error"
+	"GTMS/library/helper"
 	"GTMS/library/stringi"
 	"GTMS/models/account/admin_account"
 	"GTMS/v1/account"
@@ -42,4 +44,27 @@ func (this *AdminAccountController) AdminList() {
 		TotalPage:   int(math.Ceil(float64(total) / float64(pageCount))),
 	}
 	this.SuccessWithDataList(admins, pageInfo)
+}
+
+//修改管理员信息
+func (this *AdminAccountController) UpdateAdmin() {
+	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
+	if this.User.IsGuest {
+		this.RequireLogin()
+		return
+	}
+	inputs := account.UpdateAdminForm{}
+	if err := this.ParseInput(&inputs); err.Code != 0 {
+		this.ErrorResponse(err)
+		return
+	}
+	if inputs.AdminId != this.User.AdminId && this.User.Role != controller.ROLE_ADMIN {
+		this.ErrorResponse(gtms_error.GetError("only_myself_or_admin"))
+		return
+	}
+	if err := admin_account.UpdateAdmin(&inputs); err.Code != 0 {
+		this.ErrorResponse(err)
+		return
+	}
+	this.SuccessWithData(helper.JSON{})
 }

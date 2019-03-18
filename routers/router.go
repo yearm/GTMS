@@ -22,12 +22,12 @@ func init() {
 	//管理员操作
 	beego.Router("/v1/account", &account_manage.AccountManageController{}, "post:AddAccount;delete:DelAccount")
 
-	//学生列表
-	beego.Router("/v1/student/list", &student_account.StudentAccountController{}, "get:StuList")
+	//学生
+	beego.Router("/v1/student", &student_account.StudentAccountController{}, "get:StuList;put:UpdateStudent")
 
-	//教师列表
-	beego.Router("/v1/teacher/list", &teacher_account.TeacherAccountController{}, "get:TechList")
+	//教师
+	beego.Router("/v1/teacher", &teacher_account.TeacherAccountController{}, "get:TechList;put:UpdateTeacher")
 
-	//管理员列表
-	beego.Router("/v1/admin/list", &admin_account.AdminAccountController{}, "get:AdminList")
+	//管理员
+	beego.Router("/v1/admin", &admin_account.AdminAccountController{}, "get:AdminList;put:UpdateAdmin")
 }

@@ -97,3 +97,17 @@ func StuList(page int, pageCount int) (stus []*Student, total int) {
 	total = int(t)
 	return
 }
+
+func UpdateStudent(opt *account.UpdateStudentForm) *validator.Error {
+	sql := `UPDATE @table SET @value WHERE stu_no = :stu_no`
+	values := db.Set(helper.StructToFormWithClearNilField(*opt))
+	_, err := db.Exec(sql, stringi.Form{
+		"table":  "student",
+		"value":  values,
+		"stu_no": opt.StuNo,
+	})
+	if err != nil {
+		return gtms_error.GetError("update_info_error")
+	}
+	return &validator.Error{}
+}

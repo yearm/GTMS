@@ -12,6 +12,7 @@ import (
 	"math/big"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -104,4 +105,19 @@ func CheckHashedPassword(hashedPassword string, password string) bool {
 func CreateToken() (token string) {
 	token = uuid.NewV4().String()
 	return
+}
+
+// 结构体转form,去掉为空的字段
+func StructToFormWithClearNilField(obj interface{}) stringi.Form {
+	data := stringi.Form{}
+	t := reflect.TypeOf(obj)
+	v := reflect.ValueOf(obj)
+	for i := 0; i < t.NumField(); i++ {
+		key := t.Field(i).Name
+		val := v.Field(i).String()
+		if val != "" {
+			data[key] = v.Field(i).String()
+		}
+	}
+	return data
 }

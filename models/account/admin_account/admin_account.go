@@ -73,3 +73,17 @@ func AdminList(page int, pageCount int) (admins []*Admin, total int) {
 	total = int(t)
 	return
 }
+
+func UpdateAdmin(opt *account.UpdateAdminForm) *validator.Error {
+	sql := `UPDATE @table SET @value WHERE admin_id = :admin_id`
+	values := db.Set(helper.StructToFormWithClearNilField(*opt))
+	_, err := db.Exec(sql, stringi.Form{
+		"table":  "admin",
+		"value":  values,
+		"admin_id": opt.AdminId,
+	})
+	if err != nil {
+		return gtms_error.GetError("update_info_error")
+	}
+	return &validator.Error{}
+}

@@ -95,3 +95,17 @@ func TechList(page int, pageCount int) (techs []*Teacher, total int) {
 	total = int(t)
 	return
 }
+
+func UpdateTeacher(opt *account.UpdateTeacherForm) *validator.Error {
+	sql := `UPDATE @table SET @value WHERE tech_id = :tech_id`
+	values := db.Set(helper.StructToFormWithClearNilField(*opt))
+	_, err := db.Exec(sql, stringi.Form{
+		"table":  "teacher",
+		"value":  values,
+		"tech_id": opt.TechId,
+	})
+	if err != nil {
+		return gtms_error.GetError("update_info_error")
+	}
+	return &validator.Error{}
+}
