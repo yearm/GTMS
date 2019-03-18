@@ -8,6 +8,7 @@ import (
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
 	"GTMS/v1/admin"
+	"github.com/astaxie/beego/logs"
 )
 
 const (
@@ -30,6 +31,7 @@ func AddAccount(opt *admin.AddAccountForm) *validator.Error {
 		}
 		_, err := db.Exec(db.InsertAllSQL(table_admin, userVal))
 		if err != nil {
+			logs.Error(err)
 			return gtms_error.GetError("insert_error")
 		}
 	} else if opt.Role == controller.ROLE_STUDENT {
@@ -44,6 +46,7 @@ func AddAccount(opt *admin.AddAccountForm) *validator.Error {
 		}
 		_, err := db.Exec(db.InsertAllSQL(table_student, userVal))
 		if err != nil {
+			logs.Error(err)
 			return gtms_error.GetError("insert_error")
 		}
 	} else if opt.Role == controller.ROLE_TEACHER {
@@ -58,8 +61,19 @@ func AddAccount(opt *admin.AddAccountForm) *validator.Error {
 		}
 		_, err := db.Exec(db.InsertAllSQL(table_teacher, userVal))
 		if err != nil {
+			logs.Error(err)
 			return gtms_error.GetError("insert_error")
 		}
 	}
 	return &validator.Error{}
+}
+
+func DelAccount(opt *admin.DelAccountForm) {
+	if opt.Role == controller.ROLE_ADMIN {
+		db.Exec(db.DeleteSQL(table_admin, "admin_id", opt.Uids))
+	} else if opt.Role == controller.ROLE_TEACHER {
+		db.Exec(db.DeleteSQL(table_teacher, "tech_id", opt.Uids))
+	} else if opt.Role == controller.ROLE_STUDENT {
+		db.Exec(db.DeleteSQL(table_student, "stu_no", opt.Uids))
+	}
 }

@@ -20,7 +20,7 @@ func (this *AccountManageController) AddAccount() {
 		this.RequireLogin()
 		return
 	}
-	//只允许管理员添加
+	//只允许管理员操作
 	if this.User.Role != controller.ROLE_ADMIN {
 		this.ErrorResponse(gtms_error.GetError("access_denied"))
 		return
@@ -36,5 +36,25 @@ func (this *AccountManageController) AddAccount() {
 		this.ErrorResponse(err)
 		return
 	}
+	this.SuccessWithData(helper.JSON{})
+}
+
+//删除账号
+func (this *AccountManageController) DelAccount() {
+	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
+	if this.User.IsGuest {
+		this.RequireLogin()
+		return
+	}
+	if this.User.Role != controller.ROLE_ADMIN {
+		this.ErrorResponse(gtms_error.GetError("access_denied"))
+		return
+	}
+	inputs := admin.DelAccountForm{}
+	if err := this.ParseInput(&inputs); err.Code != 0 {
+		this.ErrorResponse(err)
+		return
+	}
+	models.DelAccount(&inputs)
 	this.SuccessWithData(helper.JSON{})
 }

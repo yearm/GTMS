@@ -5,3 +5,8 @@ type AddAccountForm struct {
 	Names []string `form:"names" minSize:"1"`
 	Role  string   `form:"role" valid:"required|switch:admin,teacher,student"`
 }
+
+type DelAccountForm struct {
+	Uids []string `form:"uids" minSize:"1"`
+	Role string   `form:"role" valid:"required|switch:admin,teacher,student"`
+}
