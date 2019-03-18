@@ -50,7 +50,6 @@ type TechInfo struct {
 }
 
 type StuInfo struct {
-	StuId        string `json:"uid"`          //账号
 	StuNo        string `json:"stuNo"`        //学号
 	StuName      string `json:"stuName"`      //学生姓名
 	StuSex       string `json:"stuSex"`       //性别

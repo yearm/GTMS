@@ -37,9 +37,8 @@ func AddAccount(opt *admin.AddAccountForm) *validator.Error {
 		for i := 0; i < len(opt.Uids); i++ {
 			pwd, _ := helper.HashedPassword(default_password)
 			userVal = append(userVal, stringi.Form{
-				"stu_id":   opt.Uids[i],
-				"pwd":      pwd,
 				"stu_no":   opt.Uids[i],
+				"pwd":      pwd,
 				"stu_name": opt.Names[i],
 			})
 		}

@@ -15,9 +15,8 @@ import (
 )
 
 type Student struct {
-	StuId        string `orm:"pk"`
+	StuNo        string `orm:"pk"`
 	Pwd          string
-	StuNo        string
 	StuName      string
 	StuSex       string
 	IdCard       string
@@ -26,7 +25,7 @@ type Student struct {
 	Major        string
 	Class        string
 	Phone        string
-	QQ           string
+	Qq           string
 	Email        string
 	WeChat       string
 	SchoolSystem string
@@ -41,7 +40,7 @@ func init() {
 
 func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 	o := boot.GetSlaveMySQL()
-	stu := Student{StuId: opt.Account}
+	stu := Student{StuNo: opt.Account}
 	o.Read(&stu)
 	if helper.CheckHashedPassword(stu.Pwd, opt.Password) {
 		accessToken := helper.CreateToken()
@@ -52,7 +51,6 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 			ErrorKey:    "",
 			UpdateTime:  time.Now().Unix(),
 			StuInfo: controller.StuInfo{
-				StuId:        stu.StuId,
 				StuNo:        stu.StuNo,
 				StuName:      stu.StuName,
 				StuSex:       stu.StuSex,
@@ -62,7 +60,7 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 				Major:        stu.Major,
 				Class:        stu.Class,
 				Phone:        stu.Phone,
-				QQ:           stu.QQ,
+				QQ:           stu.Qq,
 				Email:        stu.Email,
 				WeChat:       stu.WeChat,
 				SchoolSystem: stu.SchoolSystem,
@@ -77,14 +75,14 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 			sql := `SELECT token FROM user_session WHERE uid = :uid`
 			var token string
 			db.QueryRow(sql, stringi.Form{
-				"uid": stu.StuId,
+				"uid": stu.StuNo,
 			}, &token)
 			boot.CACHE.Del(token).Result()
 			//更新user_session表
 			db.Exec(db.ReplaceSQL("user_session", stringi.Form{
-				"uid":         stu.StuId,
+				"uid":         stu.StuNo,
 				"token":       accessToken,
-				"role":        "admin",
+				"role":        controller.ROLE_STUDENT,
 				"update_time": helper.Date("Y-m-d H:i:s"),
 			}))
 		}()

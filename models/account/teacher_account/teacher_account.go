@@ -28,7 +28,7 @@ type Teacher struct {
 	InstructMajor     string
 	Email             string
 	Phone             string
-	QQ                string
+	Qq                string
 	WeChat            string
 }
 
@@ -62,7 +62,7 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 				InstructMajor:     tech.InstructMajor,
 				Email:             tech.Email,
 				Phone:             tech.Phone,
-				QQ:                tech.QQ,
+				QQ:                tech.Qq,
 				WeChat:            tech.WeChat,
 			},
 		}
@@ -80,7 +80,7 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 			db.Exec(db.ReplaceSQL("user_session", stringi.Form{
 				"uid":         tech.TechId,
 				"token":       accessToken,
-				"role":        "admin",
+				"role":        controller.ROLE_TEACHER,
 				"update_time": helper.Date("Y-m-d H:i:s"),
 			}))
 		}()
