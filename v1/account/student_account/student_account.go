@@ -11,7 +11,7 @@ type StudentAccountController struct {
 }
 
 func (this *StudentAccountController) Login() {
-	inputs := account.SignInForm{}
+	inputs := account.LoginForm{}
 	if err := this.ParseInput(&inputs); err.Code != 0 {
 		this.ErrorResponse(err)
 		return

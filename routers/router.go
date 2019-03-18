@@ -20,5 +20,5 @@ func init() {
 	beego.Router("/v1/student/login", &student_account.StudentAccountController{}, "post:Login")
 
 	//管理员操作
-	beego.Router("/v1/admin/account", &account_manage.AccountManageController{}, "post:AddStuAccount")
+	beego.Router("/v1/admin/account", &account_manage.AccountManageController{}, "post:AddAccount")
 }

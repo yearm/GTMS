@@ -37,7 +37,7 @@ func init() {
 	orm.RegisterModel(new(Teacher))
 }
 
-func Login(opt *account.SignInForm) (*controller.Session, *validator.Error) {
+func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 	o := boot.GetSlaveMySQL()
 	tech := Teacher{TechId: opt.Account}
 	o.Read(&tech)
