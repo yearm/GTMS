@@ -7,3 +7,4 @@ conf/*.ini
 conf/*.conf
 build.sh
 gtms_go
+runtime/
