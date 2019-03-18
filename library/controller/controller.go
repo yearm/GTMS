@@ -2,6 +2,7 @@ package controller
 
 import (
 	"GTMS/boot"
+	"GTMS/library/db"
 	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
@@ -101,6 +102,16 @@ func (this *BaseController) RequireLogin() {
 			"accessTokenState": "refresh",
 		},
 	})
+}
+
+//删除redisToken
+func DelRedisToken(uid string) {
+	sql := `SELECT token FROM user_session WHERE uid = :uid`
+	var token string
+	db.QueryRow(sql, stringi.Form{
+		"uid": uid,
+	}, &token)
+	boot.CACHE.Del(token).Result()
 }
 
 //根据token获取用户

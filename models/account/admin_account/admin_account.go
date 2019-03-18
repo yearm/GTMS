@@ -47,13 +47,7 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 		s, _ := jsoniter.MarshalToString(user)
 		boot.CACHE.Set(accessToken, s, time.Hour*24*30)
 		go func() {
-			//删除旧token
-			sql := `SELECT token FROM user_session WHERE uid = :uid`
-			var token string
-			db.QueryRow(sql, stringi.Form{
-				"uid": admin.AdminId,
-			}, &token)
-			boot.CACHE.Del(token).Result()
+			controller.DelRedisToken(admin.AdminId)
 			//更新user_session表
 			db.Exec(db.ReplaceSQL("user_session", stringi.Form{
 				"uid":         admin.AdminId,
