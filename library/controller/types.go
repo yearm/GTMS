@@ -66,3 +66,9 @@ type StuInfo struct {
 	EntryDate    string `json:"entryDate"`    //入学日期
 	Education    string `json:"education"`    //学历
 }
+
+type PageInfoWithEndPage struct {
+	CurrentPage int    `json:"currentPage"`
+	IsEndPage   string `json:"isEndPage"`
+	TotalPage   int    `json:"totalPage"`
+}

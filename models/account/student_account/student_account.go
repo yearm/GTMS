@@ -15,22 +15,22 @@ import (
 )
 
 type Student struct {
-	StuNo        string `orm:"pk"`
-	Pwd          string
-	StuName      string
-	StuSex       string
-	IdCard       string
-	Birthplace   string
-	Department   string
-	Major        string
-	Class        string
-	Phone        string
-	Qq           string
-	Email        string
-	WeChat       string
-	SchoolSystem string
-	EntryDate    string
-	Education    string
+	StuNo        string `orm:"pk" json:"stuNo"`
+	Pwd          string `json:"-"`
+	StuName      string `json:"stuName"`
+	StuSex       string `json:"stuSex"`
+	IdCard       string `json:"idCard"`
+	Birthplace   string `json:"birthplace"`
+	Department   string `json:"department"`
+	Major        string `json:"major"`
+	Class        string `json:"class"`
+	Phone        string `json:"phone"`
+	Qq           string `json:"qq"`
+	Email        string `json:"email"`
+	WeChat       string `json:"weChat"`
+	SchoolSystem string `json:"schoolSystem"`
+	EntryDate    string `json:"entryDate"`
+	Education    string `json:"education"`
 }
 
 func init() {
@@ -84,4 +84,16 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 	} else {
 		return nil, gtms_error.GetError("sign_in_error")
 	}
+}
+
+func StuList(page int, pageCount int) (stus []*Student, total int) {
+	o := boot.GetSlaveMySQL()
+	qs := o.QueryTable((*Student)(nil))
+	_, err := qs.Limit(pageCount, (page-1)*pageCount).All(&stus)
+	if err != nil {
+		return
+	}
+	t, _ := qs.Count()
+	total = int(t)
+	return
 }

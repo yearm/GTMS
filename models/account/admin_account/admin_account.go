@@ -15,10 +15,10 @@ import (
 )
 
 type Admin struct {
-	AdminId   string `orm:"pk"`
-	Pwd       string
-	AdminName string
-	AdminSex  string
+	AdminId   string `orm:"pk" json:"adminId"`
+	Pwd       string `json:"-"`
+	AdminName string `json:"adminName"`
+	AdminSex  string `json:"adminSex"`
 }
 
 func init() {
@@ -60,4 +60,16 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 	} else {
 		return nil, gtms_error.GetError("sign_in_error")
 	}
+}
+
+func AdminList(page int, pageCount int) (admins []*Admin, total int) {
+	o := boot.GetSlaveMySQL()
+	qs := o.QueryTable((*Admin)(nil))
+	_, err := qs.Limit(pageCount, (page-1)*pageCount).All(&admins)
+	if err != nil {
+		return
+	}
+	t, _ := qs.Count()
+	total = int(t)
+	return
 }

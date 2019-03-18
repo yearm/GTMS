@@ -120,3 +120,11 @@ func ArrayValues(form Form, keys []string) []string {
 	}
 	return result
 }
+
+// 三元操作
+func Judge(flag bool, v1 string, v2 string) string {
+	if flag == true {
+		return v1
+	}
+	return v2
+}

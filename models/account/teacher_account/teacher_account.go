@@ -15,21 +15,21 @@ import (
 )
 
 type Teacher struct {
-	TechId            string `orm:"pk"`
-	Pwd               string
-	TechName          string
-	TechSex           string
-	Education         string
-	Degree            string
-	ResearchDirection string
-	JobTitle          string
-	Job               string
-	InstructNums      string
-	InstructMajor     string
-	Email             string
-	Phone             string
-	Qq                string
-	WeChat            string
+	TechId            string `orm:"pk" json:"tech_id"`
+	Pwd               string `json:"-"`
+	TechName          string `json:"techName"`
+	TechSex           string `json:"techSex"`
+	Education         string `json:"education"`
+	Degree            string `json:"degree"`
+	ResearchDirection string `json:"researchDirection"`
+	JobTitle          string `json:"jobTitle"`
+	Job               string `json:"job"`
+	InstructNums      string `json:"instructNums"`
+	InstructMajor     string `json:"instructMajor"`
+	Email             string `json:"email"`
+	Phone             string `json:"phone"`
+	Qq                string `json:"qq"`
+	WeChat            string `json:"weChat"`
 }
 
 func init() {
@@ -82,4 +82,16 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 	} else {
 		return nil, gtms_error.GetError("sign_in_error")
 	}
+}
+
+func TechList(page int, pageCount int) (techs []*Teacher, total int) {
+	o := boot.GetSlaveMySQL()
+	qs := o.QueryTable((*Teacher)(nil))
+	_, err := qs.Limit(pageCount, (page-1)*pageCount).All(&techs)
+	if err != nil {
+		return
+	}
+	t, _ := qs.Count()
+	total = int(t)
+	return
 }
