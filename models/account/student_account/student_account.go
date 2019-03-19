@@ -9,6 +9,7 @@ import (
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
 	"GTMS/v1/account"
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/json-iterator/go"
 	"time"
@@ -100,13 +101,19 @@ func StuList(page int, pageCount int) (stus []*Student, total int) {
 
 func UpdateStudent(opt *account.UpdateStudentForm) *validator.Error {
 	sql := `UPDATE @table SET @value WHERE stu_no = :stu_no`
-	values := db.Set(helper.StructToFormWithClearNilField(*opt))
+	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
+	//密码不为空时进行加密
+	if form["pwd"] != "" {
+		form["pwd"], _ = helper.HashedPassword(opt.Pwd)
+	}
+	values := db.Set(form)
 	_, err := db.Exec(sql, stringi.Form{
 		"table":  "student",
 		"value":  values,
 		"stu_no": opt.StuNo,
 	})
 	if err != nil {
+		logs.Error(err)
 		return gtms_error.GetError("update_info_error")
 	}
 	return &validator.Error{}

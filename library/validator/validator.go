@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"GTMS/library/helper"
+	"GTMS/library/stringi"
 	"reflect"
 	"strconv"
 	"strings"
@@ -120,7 +120,7 @@ func Check(inputs interface{}) *Error {
 		}
 		val := v.Field(i).Interface()
 
-		name := helper.ToCamel(t.Field(i).Name)
+		name := stringi.ToCamel(t.Field(i).Name)
 		alias := t.Field(i).Tag.Get("alias")
 		if alias != "" {
 			name = alias

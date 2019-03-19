@@ -65,15 +65,6 @@ func MustMarshal(v interface{}) []byte {
 	return b
 }
 
-//转驼峰
-func ToCamel(s string) string {
-	b := []byte(s)
-	if b[0] >= 'A' && b[0] <= 'Z' {
-		b[0] += 32
-	}
-	return string(b)
-}
-
 //base64加密
 func Base64Encode(str string) string {
 	var in = []byte(str)
@@ -107,8 +98,8 @@ func CreateToken() (token string) {
 	return
 }
 
-// 结构体转form,去掉为空的字段
-func StructToFormWithClearNilField(obj interface{}) stringi.Form {
+// 结构体转form,去掉为空的字段,格式化key
+func StructToFormWithClearNilField(obj interface{}, keys stringi.Form) stringi.Form {
 	data := stringi.Form{}
 	t := reflect.TypeOf(obj)
 	v := reflect.ValueOf(obj)
@@ -116,7 +107,7 @@ func StructToFormWithClearNilField(obj interface{}) stringi.Form {
 		key := t.Field(i).Name
 		val := v.Field(i).String()
 		if val != "" {
-			data[key] = v.Field(i).String()
+			data[keys[key]] = v.Field(i).String()
 		}
 	}
 	return data

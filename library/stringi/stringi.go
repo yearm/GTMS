@@ -128,3 +128,12 @@ func Judge(flag bool, v1 string, v2 string) string {
 	}
 	return v2
 }
+
+//首字母转驼峰
+func ToCamel(s string) string {
+	b := []byte(s)
+	if b[0] >= 'A' && b[0] <= 'Z' {
+		b[0] += 32
+	}
+	return string(b)
+}

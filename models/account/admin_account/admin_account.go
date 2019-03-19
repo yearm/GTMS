@@ -9,6 +9,7 @@ import (
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
 	"GTMS/v1/account"
+	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/json-iterator/go"
 	"time"
@@ -76,13 +77,19 @@ func AdminList(page int, pageCount int) (admins []*Admin, total int) {
 
 func UpdateAdmin(opt *account.UpdateAdminForm) *validator.Error {
 	sql := `UPDATE @table SET @value WHERE admin_id = :admin_id`
-	values := db.Set(helper.StructToFormWithClearNilField(*opt))
+	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
+	//密码不为空时进行加密
+	if form["pwd"] != "" {
+		form["pwd"], _ = helper.HashedPassword(opt.Pwd)
+	}
+	values := db.Set(form)
 	_, err := db.Exec(sql, stringi.Form{
 		"table":  "admin",
 		"value":  values,
 		"admin_id": opt.AdminId,
 	})
 	if err != nil {
+		logs.Error(err)
 		return gtms_error.GetError("update_info_error")
 	}
 	return &validator.Error{}

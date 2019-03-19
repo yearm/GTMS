@@ -72,3 +72,50 @@ type PageInfoWithEndPage struct {
 	IsEndPage   string `json:"isEndPage"`
 	TotalPage   int    `json:"totalPage"`
 }
+
+//格式化admin字段
+var FormatAdmin = map[string]string{
+	"AdminId":   "admin_id",
+	"Pwd":       "pwd",
+	"AdminName": "admin_name",
+	"AdminSex":  "admin_sex",
+}
+
+//格式化student字段
+var FormatStudent = map[string]string{
+	"StuNo":        "stu_no",
+	"Pwd":          "pwd",
+	"StuName":      "stu_name",
+	"StuSex":       "stu_sex",
+	"IdCard":       "id_card",
+	"Birthplace":   "birthplace",
+	"Department":   "department",
+	"Major":        "major",
+	"Class":        "class",
+	"Phone":        "phone",
+	"Qq":           "qq",
+	"Email":        "email",
+	"WeChat":       "we_chat",
+	"SchoolSystem": "school_system",
+	"EntryDate":    "entry_date",
+	"Education":    "education",
+}
+
+//格式化teacher字段
+var FormatTeacher = map[string]string{
+	"TechId":            "tech_id",
+	"Pwd":               "pwd",
+	"TechName":          "tech_name",
+	"TechSex":           "tech_sex",
+	"Education":         "education",
+	"Degree":            "degree",
+	"ResearchDirection": "research_direction",
+	"JobTitle":          "job_title",
+	"Job":               "job",
+	"InstructNums":      "instruct_nums",
+	"InstructMajor":     "instruct_major",
+	"Email":             "email",
+	"Phone":             "phone",
+	"Qq":                "qq",
+	"WeChat":            "we_chat",
+}
