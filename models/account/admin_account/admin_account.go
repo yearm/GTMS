@@ -84,8 +84,8 @@ func UpdateAdmin(opt *account.UpdateAdminForm) *validator.Error {
 	}
 	values := db.Set(form)
 	_, err := db.Exec(sql, stringi.Form{
-		"table":  "admin",
-		"value":  values,
+		"table":    "admin",
+		"value":    values,
 		"admin_id": opt.AdminId,
 	})
 	if err != nil {
