@@ -20,6 +20,8 @@ type Admin struct {
 	Pwd       string `json:"-"`
 	AdminName string `json:"adminName"`
 	AdminSex  string `json:"adminSex"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
 }
 
 func init() {
@@ -43,6 +45,8 @@ func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
 				AdminId:   admin.AdminId,
 				AdminName: admin.AdminName,
 				AdminSex:  admin.AdminSex,
+				Phone:     admin.Phone,
+				Email:     admin.Email,
 			},
 		}
 		s, _ := jsoniter.MarshalToString(user)

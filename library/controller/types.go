@@ -30,6 +30,8 @@ type AdminInfo struct {
 	AdminId   string `json:"adminId"`
 	AdminName string `json:"adminName"`
 	AdminSex  string `json:"adminSex"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
 }
 
 type TechInfo struct {
@@ -79,6 +81,8 @@ var FormatAdmin = map[string]string{
 	"Pwd":       "pwd",
 	"AdminName": "admin_name",
 	"AdminSex":  "admin_sex",
+	"Phone":     "phone",
+	"email":     "email",
 }
 
 //格式化student字段

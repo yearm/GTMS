@@ -12,6 +12,8 @@ type UpdateAdminForm struct {
 	Pwd       string `form:"pwd"`
 	AdminName string `form:"adminName"`
 	AdminSex  string `form:"AdminSex"`
+	Phone     string `form:"phone"`
+	Email     string `form:"email"`
 }
 
 //更新学生Form
