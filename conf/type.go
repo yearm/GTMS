@@ -14,3 +14,11 @@ type RedisConfig struct {
 	Password string
 	Db       int
 }
+
+type SmtpConfig struct {
+	Address  string
+	Host     string
+	Port     int
+	UserName string
+	Password string
+}

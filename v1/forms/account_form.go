@@ -63,4 +63,6 @@ type SendEmailToResetPwd struct {
 
 //重置密码Form
 type ResetPwdForm struct {
+	Token  string `form:"token" valid:"required"`
+	NewPwd string `form:"newPwd" valid:"required"`
 }

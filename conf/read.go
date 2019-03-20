@@ -68,3 +68,19 @@ func GetRedisConfig() RedisConfig {
 		Db:       db,
 	}
 }
+
+//获取smtp配置
+func GetSmtpConfig() SmtpConfig {
+	address := cfg.Section("smtp").Key("address").String()
+	host := cfg.Section("smtp").Key("host").String()
+	port, _ := cfg.Section("smtp").Key("port").Int()
+	username := cfg.Section("smtp").Key("username").String()
+	password := cfg.Section("smtp").Key("password").String()
+	return SmtpConfig{
+		Address:  address,
+		Host:     host,
+		Port:     port,
+		UserName: username,
+		Password: password,
+	}
+}

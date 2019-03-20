@@ -11,7 +11,6 @@ type ResetPwdController struct {
 	controller.BaseController
 }
 
-
 //发送重置密码邮件
 func (this *ResetPwdController) SendEmailToResetPwd() {
 	inputs := forms.SendEmailToResetPwd{}
@@ -26,7 +25,6 @@ func (this *ResetPwdController) SendEmailToResetPwd() {
 	}
 	this.SuccessWithData(helper.JSON{})
 }
-
 
 //重置密码
 func (this *ResetPwdController) ResetPwd() {
