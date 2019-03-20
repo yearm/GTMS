@@ -17,17 +17,13 @@ func init() {
 	beego.Router("/v1/teacher/login", &account_controllers.TeacherAccountController{}, "post:TechLogin")
 	beego.Router("/v1/student/login", &account_controllers.StudentAccountController{}, "post:StuLogin")
 
-	//管理员操作
+	//管理员添加删除账号
 	beego.Router("/v1/account", &admin_controllers.AccountManageController{}, "post:AddAccount;delete:DelAccount")
 
-	//学生
-	beego.Router("/v1/student", &account_controllers.StudentAccountController{}, "get:StuList;put:UpdateStudent")
-
-	//教师
-	beego.Router("/v1/teacher", &account_controllers.TeacherAccountController{}, "get:TechList;put:UpdateTeacher")
-
-	//管理员
+	//修改信息
 	beego.Router("/v1/admin", &account_controllers.AdminAccountController{}, "get:AdminList;put:UpdateAdmin")
+	beego.Router("/v1/teacher", &account_controllers.TeacherAccountController{}, "get:TechList;put:UpdateTeacher")
+	beego.Router("/v1/student", &account_controllers.StudentAccountController{}, "get:StuList;put:UpdateStudent")
 
 	//重置密码
 	beego.Router("v1/account/sendEmail", &account_controllers.ResetPwdController{}, "post:SendEmailToResetPwd")
