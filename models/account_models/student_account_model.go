@@ -1,4 +1,4 @@
-package student_account
+package account_models
 
 import (
 	"GTMS/boot"
@@ -8,7 +8,7 @@ import (
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
-	"GTMS/v1/account"
+	"GTMS/v1/forms"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/json-iterator/go"
@@ -39,7 +39,7 @@ func init() {
 	orm.RegisterModel(new(Student))
 }
 
-func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
+func StuLogin(opt *forms.LoginForm) (*controller.Session, *validator.Error) {
 	o := boot.GetSlaveMySQL()
 	stu := Student{StuNo: opt.Account}
 	o.Read(&stu)
@@ -99,7 +99,7 @@ func StuList(page int, pageCount int) (stus []*Student, total int) {
 	return
 }
 
-func UpdateStudent(opt *account.UpdateStudentForm) *validator.Error {
+func UpdateStudent(opt *forms.UpdateStudentForm) *validator.Error {
 	sql := `UPDATE @table SET @value WHERE stu_no = :stu_no`
 	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
 	//密码不为空时进行加密

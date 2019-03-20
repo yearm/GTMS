@@ -1,4 +1,4 @@
-package teacher_account
+package account_models
 
 import (
 	"GTMS/boot"
@@ -8,7 +8,7 @@ import (
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
-	"GTMS/v1/account"
+	"GTMS/v1/forms"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/json-iterator/go"
@@ -38,7 +38,7 @@ func init() {
 	orm.RegisterModel(new(Teacher))
 }
 
-func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
+func TechLogin(opt *forms.LoginForm) (*controller.Session, *validator.Error) {
 	o := boot.GetSlaveMySQL()
 	tech := Teacher{TechId: opt.Account}
 	o.Read(&tech)
@@ -97,7 +97,7 @@ func TechList(page int, pageCount int) (techs []*Teacher, total int) {
 	return
 }
 
-func UpdateTeacher(opt *account.UpdateTeacherForm) *validator.Error {
+func UpdateTeacher(opt *forms.UpdateTeacherForm) *validator.Error {
 	sql := `UPDATE @table SET @value WHERE tech_id = :tech_id`
 	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
 	//密码不为空时进行加密

@@ -1,4 +1,4 @@
-package admin_account
+package account_models
 
 import (
 	"GTMS/boot"
@@ -8,7 +8,7 @@ import (
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
-	"GTMS/v1/account"
+	"GTMS/v1/forms"
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	"github.com/json-iterator/go"
@@ -29,7 +29,7 @@ func init() {
 	orm.RegisterModel(new(Admin))
 }
 
-func Login(opt *account.LoginForm) (*controller.Session, *validator.Error) {
+func AdminLogin(opt *forms.LoginForm) (*controller.Session, *validator.Error) {
 	o := boot.GetSlaveMySQL()
 	admin := Admin{AdminId: opt.Account}
 	o.Read(&admin)
@@ -79,7 +79,7 @@ func AdminList(page int, pageCount int) (admins []*Admin, total int) {
 	return
 }
 
-func UpdateAdmin(opt *account.UpdateAdminForm) *validator.Error {
+func UpdateAdmin(opt *forms.UpdateAdminForm) *validator.Error {
 	sql := `UPDATE @table SET @value WHERE admin_id = :admin_id`
 	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
 	//密码不为空时进行加密

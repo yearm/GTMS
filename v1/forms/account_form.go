@@ -1,4 +1,4 @@
-package account
+package forms
 
 //登录Form
 type LoginForm struct {
@@ -6,9 +6,9 @@ type LoginForm struct {
 	Password string `form:"password" valid:"required"`
 }
 
-//更新管理员Form
+//更新管理员信息Form
 type UpdateAdminForm struct {
-	AdminId   string `form:"adminId"`
+	AdminId   string `form:"adminId" valid:"required"`
 	Pwd       string `form:"pwd"`
 	AdminName string `form:"adminName"`
 	AdminSex  string `form:"AdminSex"`
@@ -16,9 +16,9 @@ type UpdateAdminForm struct {
 	Email     string `form:"email"`
 }
 
-//更新学生Form
+//更新学生信息Form
 type UpdateStudentForm struct {
-	StuNo        string `form:"stuNo"`
+	StuNo        string `form:"stuNo" valid:"required"`
 	Pwd          string `form:"pwd"`
 	StuName      string `form:"stuName"`
 	StuSex       string `form:"stuSex"`
@@ -36,9 +36,9 @@ type UpdateStudentForm struct {
 	Education    string `form:"education"`
 }
 
-//更新教师Form
+//更新教师信息Form
 type UpdateTeacherForm struct {
-	TechId            string `form:"techId"`
+	TechId            string `form:"techId" valid:"required"`
 	Pwd               string `form:"pwd"`
 	TechName          string `form:"techName"`
 	TechSex           string `form:"techSex"`
@@ -53,4 +53,14 @@ type UpdateTeacherForm struct {
 	Phone             string `form:"phone"`
 	Qq                string `form:"qq"`
 	WeChat            string `form:"weChat"`
+}
+
+//发送重置密码邮件Form
+type SendEmailToResetPwd struct {
+	Role string `form:"role" valid:"required|switch:admin,teacher,student"`
+	Uid  string `form:"uid" valid:"required"`
+}
+
+//重置密码Form
+type ResetPwdForm struct {
 }

@@ -1,27 +1,27 @@
-package admin_account
+package account_controllers
 
 import (
 	"GTMS/library/controller"
 	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
-	"GTMS/models/account/admin_account"
-	"GTMS/v1/account"
+	"GTMS/models/account_models"
+	"GTMS/v1/forms"
 	"math"
 )
 
-type AdminAccountController struct {
+type StudentAccountController struct {
 	controller.BaseController
 }
 
-//管理员登录
-func (this *AdminAccountController) Login() {
-	inputs := account.LoginForm{}
+//登录
+func (this *StudentAccountController) StuLogin() {
+	inputs := forms.LoginForm{}
 	if err := this.ParseInput(&inputs); err.Code != 0 {
 		this.ErrorResponse(err)
 		return
 	}
-	session, err := admin_account.Login(&inputs)
+	session, err := account_models.StuLogin(&inputs)
 	if err.Code != 0 {
 		this.ErrorResponse(err)
 		return
@@ -29,40 +29,42 @@ func (this *AdminAccountController) Login() {
 	this.SuccessWithData(session)
 }
 
-//获取管理员列表
-func (this *AdminAccountController) AdminList() {
+//获取学生列表
+func (this *StudentAccountController) StuList() {
 	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
 	if this.User.IsGuest {
 		this.RequireLogin()
 		return
 	}
 	page, pageCount := this.GetPageInfo()
-	admins, total := admin_account.AdminList(page, pageCount)
+	stus, total := account_models.StuList(page, pageCount)
 	var pageInfo = controller.PageInfoWithEndPage{
 		CurrentPage: page,
-		IsEndPage:   stringi.Judge(len(admins) < pageCount, "yes", "no"),
+		IsEndPage:   stringi.Judge(len(stus) < pageCount, "yes", "no"),
 		TotalPage:   int(math.Ceil(float64(total) / float64(pageCount))),
 	}
-	this.SuccessWithDataList(admins, pageInfo)
+	this.SuccessWithDataList(stus, pageInfo)
 }
 
-//修改管理员信息
-func (this *AdminAccountController) UpdateAdmin() {
+
+//修改学生信息
+func (this *StudentAccountController) UpdateStudent() {
 	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
 	if this.User.IsGuest {
 		this.RequireLogin()
 		return
 	}
-	inputs := account.UpdateAdminForm{}
+	inputs := forms.UpdateStudentForm{}
 	if err := this.ParseInput(&inputs); err.Code != 0 {
 		this.ErrorResponse(err)
 		return
 	}
-	if inputs.AdminId != this.User.AdminId && this.User.Role != controller.ROLE_ADMIN {
+	//仅管理员和自己能修改
+	if inputs.StuNo != this.User.StuNo && this.User.Role != controller.ROLE_ADMIN {
 		this.ErrorResponse(gtms_error.GetError("only_myself_or_admin"))
 		return
 	}
-	if err := admin_account.UpdateAdmin(&inputs); err.Code != 0 {
+	if err := account_models.UpdateStudent(&inputs); err.Code != 0 {
 		this.ErrorResponse(err)
 		return
 	}

@@ -1,4 +1,4 @@
-package admin
+package admin_models
 
 import (
 	"GTMS/library/controller"
@@ -7,7 +7,7 @@ import (
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
-	"GTMS/v1/admin"
+	"GTMS/v1/forms"
 	"github.com/astaxie/beego/logs"
 )
 
@@ -19,7 +19,7 @@ const (
 	default_password = "123456"
 )
 
-func AddAccount(opt *admin.AddAccountForm) *validator.Error {
+func AddAccount(opt *forms.AddAccountForm) *validator.Error {
 	if opt.Role == controller.ROLE_ADMIN {
 		userVal := stringi.Forms{}
 		for i := 0; i < len(opt.Uids); i++ {
@@ -69,7 +69,7 @@ func AddAccount(opt *admin.AddAccountForm) *validator.Error {
 	return &validator.Error{}
 }
 
-func DelAccount(opt *admin.DelAccountForm) {
+func DelAccount(opt *forms.DelAccountForm) {
 	if opt.Role == controller.ROLE_ADMIN {
 		db.Exec(db.DeleteSQL(table_admin, "admin_id", opt.Uids))
 		go func() {

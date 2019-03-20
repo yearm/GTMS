@@ -1,16 +1,17 @@
-package account_manage
+package admin_controllers
 
 import (
 	"GTMS/library/controller"
 	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
-	models "GTMS/models/admin"
-	"GTMS/v1/admin"
+	"GTMS/models/admin_models"
+	"GTMS/v1/forms"
 )
 
 type AccountManageController struct {
 	controller.BaseController
 }
+
 
 //添加账号
 func (this *AccountManageController) AddAccount() {
@@ -26,18 +27,19 @@ func (this *AccountManageController) AddAccount() {
 		return
 	}
 	//解析参数
-	inputs := admin.AddAccountForm{}
+	inputs := forms.AddAccountForm{}
 	if err := this.ParseInput(&inputs); err.Code != 0 {
 		this.ErrorResponse(err)
 		return
 	}
 	//调用model
-	if err := models.AddAccount(&inputs); err.Code != 0 {
+	if err := admin_models.AddAccount(&inputs); err.Code != 0 {
 		this.ErrorResponse(err)
 		return
 	}
 	this.SuccessWithData(helper.JSON{})
 }
+
 
 //删除账号
 func (this *AccountManageController) DelAccount() {
@@ -50,11 +52,11 @@ func (this *AccountManageController) DelAccount() {
 		this.ErrorResponse(gtms_error.GetError("access_denied"))
 		return
 	}
-	inputs := admin.DelAccountForm{}
+	inputs := forms.DelAccountForm{}
 	if err := this.ParseInput(&inputs); err.Code != 0 {
 		this.ErrorResponse(err)
 		return
 	}
-	models.DelAccount(&inputs)
+	admin_models.DelAccount(&inputs)
 	this.SuccessWithData(helper.JSON{})
 }
