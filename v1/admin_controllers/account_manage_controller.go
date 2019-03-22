@@ -12,7 +12,6 @@ type AccountManageController struct {
 	controller.BaseController
 }
 
-
 //添加账号
 func (this *AccountManageController) AddAccount() {
 	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
@@ -39,7 +38,6 @@ func (this *AccountManageController) AddAccount() {
 	}
 	this.SuccessWithData(helper.JSON{})
 }
-
 
 //删除账号
 func (this *AccountManageController) DelAccount() {

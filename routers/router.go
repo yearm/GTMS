@@ -17,6 +17,9 @@ func init() {
 	beego.Router("/v1/teacher/login", &account_controllers.TeacherAccountController{}, "post:TechLogin")
 	beego.Router("/v1/student/login", &account_controllers.StudentAccountController{}, "post:StuLogin")
 
+	//登出
+	beego.Router("/v1/account/logout", &account_controllers.AccountController{}, "delete:AccountLogout")
+
 	//管理员添加删除账号
 	beego.Router("/v1/account", &admin_controllers.AccountManageController{}, "post:AddAccount;delete:DelAccount")
 

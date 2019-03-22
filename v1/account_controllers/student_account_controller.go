@@ -46,7 +46,6 @@ func (this *StudentAccountController) StuList() {
 	this.SuccessWithDataList(stus, pageInfo)
 }
 
-
 //修改学生信息
 func (this *StudentAccountController) UpdateStudent() {
 	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))

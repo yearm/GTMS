@@ -14,6 +14,7 @@ type TeacherAccountController struct {
 	controller.BaseController
 }
 
+//登录
 func (this *TeacherAccountController) TechLogin() {
 	inputs := forms.LoginForm{}
 	if err := this.ParseInput(&inputs); err.Code != 0 {
@@ -44,7 +45,6 @@ func (this *TeacherAccountController) TechList() {
 	}
 	this.SuccessWithDataList(techs, pageInfo)
 }
-
 
 //修改教师信息
 func (this *TeacherAccountController) UpdateTeacher() {
