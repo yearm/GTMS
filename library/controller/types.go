@@ -123,3 +123,18 @@ var FormatTeacher = map[string]string{
 	"Qq":                "qq",
 	"WeChat":            "we_chat",
 }
+
+//格式化Thesis字段
+var FormatThesis = map[string]string{
+	"Tid":              "tid",
+	"Subject":          "subject",
+	"Subtopic":         "subtopic",
+	"Keyword":          "keyword",
+	"Type":             "type",
+	"Source":           "source",
+	"Workload":         "workload",
+	"DegreeDifficulty": "degree_difficulty",
+	"ResearchDirec":    "research_direc",
+	"Content":          "content",
+	"CreateTime":       "create_time",
+}

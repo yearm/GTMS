@@ -137,3 +137,9 @@ func ToCamel(s string) string {
 	}
 	return string(b)
 }
+
+//string---->int64
+func ToInt64(s string) (i int64) {
+	i, _ = strconv.ParseInt(s, 10, 64)
+	return
+}

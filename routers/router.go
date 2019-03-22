@@ -5,6 +5,7 @@ import (
 	"GTMS/v1/account_controllers"
 	"GTMS/v1/admin_controllers"
 	"GTMS/v1/index"
+	"GTMS/v1/thesis_controllers"
 	"github.com/astaxie/beego"
 )
 
@@ -24,7 +25,10 @@ func init() {
 	//获取账号列表、修改账号信息
 	beego.Router("/v1/account", &account_controllers.AccountController{}, "get:AccountList;put:AccountUpdate")
 
-	//重置密码
+	//发送邮件重置密码
 	beego.Router("v1/account/sendEmail", &account_controllers.ResetPwdController{}, "post:SendEmailToResetPwd")
 	beego.Router("v1/account/resetPwd", &account_controllers.ResetPwdController{}, "put:ResetPwd")
+
+	//论文
+	beego.Router("/v1/thesis", &thesis_controllers.ThesisController{}, "get:ThesisList;post:AddThesis;put:UpdateThesis;delete:DelThesis")
 }
