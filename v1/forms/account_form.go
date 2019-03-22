@@ -2,6 +2,7 @@ package forms
 
 //登录Form
 type LoginForm struct {
+	Role     string `form:"role" valid:"required|switch:admin,teacher,student"`
 	Account  string `form:"account" valid:"required"`
 	Password string `form:"password" valid:"required"`
 }

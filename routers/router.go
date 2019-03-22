@@ -13,9 +13,7 @@ func init() {
 	beego.Router("/", &index.MainController{}, "get:Index")
 
 	//登录
-	beego.Router("/v1/admin/login", &account_controllers.AdminAccountController{}, "post:AdminLogin")
-	beego.Router("/v1/teacher/login", &account_controllers.TeacherAccountController{}, "post:TechLogin")
-	beego.Router("/v1/student/login", &account_controllers.StudentAccountController{}, "post:StuLogin")
+	beego.Router("v1/account/login", &account_controllers.AccountController{}, "post:AccountLogin")
 
 	//登出
 	beego.Router("/v1/account/logout", &account_controllers.AccountController{}, "delete:AccountLogout")
@@ -23,10 +21,8 @@ func init() {
 	//管理员添加删除账号
 	beego.Router("/v1/account", &admin_controllers.AccountManageController{}, "post:AddAccount;delete:DelAccount")
 
-	//修改信息
-	beego.Router("/v1/admin", &account_controllers.AdminAccountController{}, "get:AdminList;put:UpdateAdmin")
-	beego.Router("/v1/teacher", &account_controllers.TeacherAccountController{}, "get:TechList;put:UpdateTeacher")
-	beego.Router("/v1/student", &account_controllers.StudentAccountController{}, "get:StuList;put:UpdateStudent")
+	//获取账号列表、修改账号信息
+	beego.Router("/v1/account", &account_controllers.AccountController{}, "get:AccountList;put:AccountUpdate")
 
 	//重置密码
 	beego.Router("v1/account/sendEmail", &account_controllers.ResetPwdController{}, "post:SendEmailToResetPwd")
