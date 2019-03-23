@@ -136,5 +136,4 @@ var FormatThesis = map[string]string{
 	"DegreeDifficulty": "degree_difficulty",
 	"ResearchDirec":    "research_direc",
 	"Content":          "content",
-	"CreateTime":       "create_time",
 }

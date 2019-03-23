@@ -23,7 +23,9 @@ type Thesis struct {
 	DegreeDifficulty string `json:"degreeDifficulty"`
 	ResearchDirec    string `json:"researchDirec"`
 	Content          string `json:"content"`
-	CreateTime       string `json:"createTime"`
+	UpdateUid        string `json:"updateUid"`
+	UpdateUser       string `json:"updateUser"`
+	UpdateTime       string `json:"updateTime"`
 }
 
 func init() {
@@ -31,7 +33,7 @@ func init() {
 	orm.RegisterModel(new(Thesis))
 }
 
-func AddThesis(opt *forms.AddThesisForm) *validator.Error {
+func AddThesis(req *controller.Request, opt *forms.AddThesisForm) *validator.Error {
 	o := boot.GetMasterMySQL()
 	_, err := o.Insert(&Thesis{
 		Subject:          opt.Subject,
@@ -43,7 +45,9 @@ func AddThesis(opt *forms.AddThesisForm) *validator.Error {
 		DegreeDifficulty: opt.DegreeDifficulty,
 		ResearchDirec:    opt.ResearchDirec,
 		Content:          opt.Content,
-		CreateTime:       helper.Date("Y-m-d H:i:s"),
+		UpdateUid:        req.User.TechId,
+		UpdateUser:       req.User.TechName,
+		UpdateTime:       helper.Date("Y-m-d H:i:s"),
 	})
 	if err != nil {
 		return gtms_error.GetError("insert_error")
@@ -57,9 +61,13 @@ func DelThesis(opt *forms.DelThesisForm) *validator.Error {
 	return &validator.Error{}
 }
 
-func UpdateThesis(opt *forms.UpdateThesisForm) *validator.Error {
+func UpdateThesis(opt *forms.UpdateThesisForm, req *controller.Request) *validator.Error {
 	sql := `UPDATE @table SET @value WHERE tid = :tid`
-	value := db.Set(helper.StructToFormWithClearNilField(*opt, controller.FormatThesis))
+	form := helper.StructToFormWithClearNilField(*opt, controller.FormatThesis)
+	form["update_uid"] = req.User.TechId
+	form["update_user"] = req.User.TechName
+	form["update_time"] = helper.Date("Y-m-d H:i:s")
+	value := db.Set(form)
 	_, err := db.Exec(sql, stringi.Form{
 		"table": "thesis",
 		"value": value,

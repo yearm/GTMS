@@ -21,8 +21,8 @@ func (this *ThesisController) AddThesis() {
 		this.RequireLogin()
 		return
 	}
-	//只允许管理员和教师添加
-	if this.User.Role != controller.ROLE_ADMIN && this.User.Role != controller.ROLE_TEACHER {
+	//只允许教师添加
+	if this.User.Role != controller.ROLE_TEACHER {
 		this.ErrorResponse(gtms_error.GetError("access_denied"))
 		return
 	}
@@ -31,7 +31,7 @@ func (this *ThesisController) AddThesis() {
 		this.ErrorResponse(err)
 		return
 	}
-	err := thesis_models.AddThesis(&inputs)
+	err := thesis_models.AddThesis(&this.Request, &inputs)
 	if err.Code != 0 {
 		this.ErrorResponse(err)
 		return
@@ -46,8 +46,8 @@ func (this *ThesisController) DelThesis() {
 		this.RequireLogin()
 		return
 	}
-	//只允许管理员和教师删除
-	if this.User.Role != controller.ROLE_ADMIN && this.User.Role != controller.ROLE_TEACHER {
+	//只允许教师删除
+	if this.User.Role != controller.ROLE_TEACHER {
 		this.ErrorResponse(gtms_error.GetError("access_denied"))
 		return
 	}
@@ -71,8 +71,8 @@ func (this *ThesisController) UpdateThesis() {
 		this.RequireLogin()
 		return
 	}
-	//只允许管理员和教师修改
-	if this.User.Role != controller.ROLE_ADMIN && this.User.Role != controller.ROLE_TEACHER {
+	//只允许教师修改
+	if this.User.Role != controller.ROLE_TEACHER {
 		this.ErrorResponse(gtms_error.GetError("access_denied"))
 		return
 	}
@@ -81,7 +81,7 @@ func (this *ThesisController) UpdateThesis() {
 		this.ErrorResponse(err)
 		return
 	}
-	err := thesis_models.UpdateThesis(&inputs)
+	err := thesis_models.UpdateThesis(&inputs, &this.Request)
 	if err.Code != 0 {
 		this.ErrorResponse(err)
 		return
