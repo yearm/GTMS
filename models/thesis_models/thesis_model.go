@@ -71,6 +71,14 @@ func UpdateThesis(opt *forms.UpdateThesisForm) *validator.Error {
 	return &validator.Error{}
 }
 
-func ThesisList() {
-
+func ThesisList(page int, pageCount int) (thesiss []*Thesis, total int) {
+	o := boot.GetSlaveMySQL()
+	qs := o.QueryTable((*Thesis)(nil))
+	_, err := qs.Limit(pageCount, (page-1)*pageCount).All(&thesiss)
+	if err != nil {
+		return
+	}
+	t, _ := qs.Count()
+	total = int(t)
+	return
 }

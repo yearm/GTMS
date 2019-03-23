@@ -241,6 +241,8 @@ func UpdateAdmin(opt *forms.UpdateAdminForm) *validator.Error {
 	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
 	if form["pwd"] != "" {
 		form["pwd"], _ = helper.HashedPassword(opt.Pwd)
+		//更新密码会删除token
+		controller.DelRedisToken(opt.AdminId)
 	}
 	values := db.Set(form)
 	_, err := db.Exec(sql, stringi.Form{
@@ -260,6 +262,8 @@ func UpdateStudent(opt *forms.UpdateStudentForm) *validator.Error {
 	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
 	if form["pwd"] != "" {
 		form["pwd"], _ = helper.HashedPassword(opt.Pwd)
+		//更新密码会删除token
+		controller.DelRedisToken(opt.StuNo)
 	}
 	values := db.Set(form)
 	_, err := db.Exec(sql, stringi.Form{
@@ -279,6 +283,8 @@ func UpdateTeacher(opt *forms.UpdateTeacherForm) *validator.Error {
 	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
 	if form["pwd"] != "" {
 		form["pwd"], _ = helper.HashedPassword(opt.Pwd)
+		//更新密码会删除token
+		controller.DelRedisToken(opt.TechId)
 	}
 	values := db.Set(form)
 	_, err := db.Exec(sql, stringi.Form{
