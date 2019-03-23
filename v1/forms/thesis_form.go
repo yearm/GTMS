@@ -30,4 +30,5 @@ type UpdateThesisForm struct {
 	DegreeDifficulty string `form:"degreeDifficulty"`
 	ResearchDirec    string `form:"researchDirec"`
 	Content          string `form:"content"`
+	Status           string `form:"status"`
 }

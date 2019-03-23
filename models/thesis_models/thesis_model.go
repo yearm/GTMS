@@ -26,7 +26,13 @@ type Thesis struct {
 	UpdateUid        string `json:"updateUid"`
 	UpdateUser       string `json:"updateUser"`
 	UpdateTime       string `json:"updateTime"`
+	Status           string `json:"status"`
 }
+
+const (
+	Optional_Status    = "0" //论文可选
+	NotOptional_Status = "1" //不可选
+)
 
 func init() {
 	//需要在init中注册定义的model
@@ -48,6 +54,7 @@ func AddThesis(req *controller.Request, opt *forms.AddThesisForm) *validator.Err
 		UpdateUid:        req.User.TechId,
 		UpdateUser:       req.User.TechName,
 		UpdateTime:       helper.Date("Y-m-d H:i:s"),
+		Status:           Optional_Status,
 	})
 	if err != nil {
 		return gtms_error.GetError("insert_error")
@@ -82,7 +89,7 @@ func UpdateThesis(opt *forms.UpdateThesisForm, req *controller.Request) *validat
 func ThesisList(page int, pageCount int) (thesiss []*Thesis, total int) {
 	o := boot.GetSlaveMySQL()
 	qs := o.QueryTable((*Thesis)(nil))
-	_, err := qs.Limit(pageCount, (page-1)*pageCount).All(&thesiss)
+	_, err := qs.Filter("status", Optional_Status).Limit(pageCount, (page-1)*pageCount).All(&thesiss)
 	if err != nil {
 		return
 	}
