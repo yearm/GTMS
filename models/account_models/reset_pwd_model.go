@@ -44,10 +44,10 @@ func SendEmailToResetPwd(opt *forms.SendEmailToResetPwd) *validator.Error {
 			},
 		}
 		s, _ := jsoniter.MarshalToString(session)
-		boot.CACHE.Set(accessToken, s, time.Minute*10) //设置10分钟缓存
+		boot.CACHE.Set(accessToken, s, time.Minute*5) //设置5分钟缓存
 		body := `<h4>` + admin.AdminName + `:<br>
 			你好！<br>
-			您在本系统中的用户名是` + admin.AdminId + `，请点击以下超链接，在浏览器中重置自己的密码(10分钟内有效):<br><br>
+			您在本系统中的用户名是` + admin.AdminId + `，请点击以下超链接，在浏览器中重置自己的密码(5分钟内有效):<br><br>
 			<a href="` + url + `?token=` + accessToken + `">` + url + `?token=` + accessToken + `</a><br><br>
 			黄冈师范学院毕业论文管理系统<br><br>
 			注:此邮件为本系统所发，非对方邮箱所发，所以请勿回邮。
@@ -79,10 +79,10 @@ func SendEmailToResetPwd(opt *forms.SendEmailToResetPwd) *validator.Error {
 			},
 		}
 		s, _ := jsoniter.MarshalToString(session)
-		boot.CACHE.Set(accessToken, s, time.Minute*10) //设置10分钟缓存
+		boot.CACHE.Set(accessToken, s, time.Minute*5) //设置5分钟缓存
 		body := `<h4>` + tech.TechName + `:<br>
 			你好！<br>
-			您在本系统中的用户名是` + tech.TechId + `，请点击以下超链接，在浏览器中重置自己的密码(10分钟内有效):<br><br>
+			您在本系统中的用户名是` + tech.TechId + `，请点击以下超链接，在浏览器中重置自己的密码(5分钟内有效):<br><br>
 			<a href="` + url + `?token=` + accessToken + `">` + url + `?token=` + accessToken + `</a><br><br>
 			黄冈师范学院毕业论文管理系统<br><br>
 			注:此邮件为本系统所发，非对方邮箱所发，所以请勿回邮。
@@ -113,10 +113,10 @@ func SendEmailToResetPwd(opt *forms.SendEmailToResetPwd) *validator.Error {
 			},
 		}
 		s, _ := jsoniter.MarshalToString(session)
-		boot.CACHE.Set(accessToken, s, time.Minute*10) //设置10分钟缓存
+		boot.CACHE.Set(accessToken, s, time.Minute*5) //设置5分钟缓存
 		body := `<h4>` + stu.StuName + `:<br>
 			你好！<br>
-			您在本系统中的用户名是` + stu.StuNo + `，请点击以下超链接，在浏览器中重置自己的密码(10分钟内有效):<br><br>
+			您在本系统中的用户名是` + stu.StuNo + `，请点击以下超链接，在浏览器中重置自己的密码(5分钟内有效):<br><br>
 			<a href="` + url + `?token=` + accessToken + `">` + url + `?token=` + accessToken + `</a><br><br>
 			黄冈师范学院毕业论文管理系统<br><br>
 			注:此邮件为本系统所发，非对方邮箱所发，所以请勿回邮。

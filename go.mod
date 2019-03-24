@@ -2,7 +2,6 @@ module GTMS
 
 require (
 	github.com/astaxie/beego v1.11.1
-	github.com/go-gomail/gomail v0.0.0-20150902115704-41f357289737
 	github.com/go-ini/ini v1.42.0
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
@@ -15,4 +14,5 @@ require (
 	golang.org/x/crypto v0.0.0-20181127143415-eb0de9b17e85
 	google.golang.org/appengine v1.4.0 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 )

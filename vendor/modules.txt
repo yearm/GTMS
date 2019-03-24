@@ -9,8 +9,6 @@ github.com/astaxie/beego/grace
 github.com/astaxie/beego/session
 github.com/astaxie/beego/toolbox
 github.com/astaxie/beego/utils
-# github.com/go-gomail/gomail v0.0.0-20150902115704-41f357289737
-github.com/go-gomail/gomail
 # github.com/go-ini/ini v1.42.0
 github.com/go-ini/ini
 # github.com/go-redis/redis v6.15.2+incompatible
@@ -42,5 +40,7 @@ golang.org/x/crypto/acme
 google.golang.org/appengine/cloudsql
 # gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc
 gopkg.in/alexcesaro/quotedprintable.v3
+# gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
+gopkg.in/gomail.v2
 # gopkg.in/yaml.v2 v2.2.1
 gopkg.in/yaml.v2

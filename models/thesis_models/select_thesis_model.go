@@ -40,6 +40,10 @@ type ConfirmThesis struct {
 	account_models.Teacher `json:"teacher"`
 }
 
+const (
+	subject = "黄冈师范学院毕业论文管理系统学生选题"
+)
+
 func init() {
 	//需要在init中注册定义的model
 	orm.RegisterModel(new(SelectedThesis))
@@ -82,8 +86,16 @@ func SelectThesis(opt *forms.SelectThesisForm, req *controller.Request) *validat
 		return gtms_error.GetError("select_thesis_failed")
 	}
 	o.Commit()
-	//发送邮件给教师............
-
+	//发送邮件给教师...
+	tech := account_models.Teacher{TechId: thesis.UpdateUid}
+	o.Read(&tech)
+	body := `<h4>` + thesis.UpdateUser + `:<br>
+			您好！<br>
+			学生(` + req.User.StuName + `)已选取您的毕业论文题目(` + thesis.Subject + `),请尽快处理!<br><br>
+			黄冈师范学院毕业论文管理系统<br><br>
+			注:此邮件为本系统所发，非对方邮箱所发，所以请勿回邮。
+		</h4>`
+	boot.SendEmail(tech.Email, thesis.UpdateUser, subject, body)
 	return &validator.Error{}
 }
 
@@ -110,8 +122,6 @@ func ConfirmSelectedThesis(opt *forms.ConfirmSelectedlThesisForm) *validator.Err
 	if err != nil || err1 != nil {
 		return gtms_error.GetError("confirm_error")
 	}
-	//发送邮件给学生....
-
 	return &validator.Error{}
 
 }
