@@ -73,6 +73,7 @@ func AccountLogin(opt *forms.LoginForm) (*controller.Session, *validator.Error) 
 	accessToken := helper.CreateToken()
 	var redisStr string
 	var uid string
+	var role string
 	session := controller.Session{}
 	switch opt.Role {
 	case controller.ROLE_ADMIN:
@@ -95,6 +96,7 @@ func AccountLogin(opt *forms.LoginForm) (*controller.Session, *validator.Error) 
 			}
 			redisStr, _ = jsoniter.MarshalToString(user)
 			uid = admin.AdminId
+			role = controller.ROLE_ADMIN
 		} else {
 			return nil, gtms_error.GetError("sign_in_error")
 		}
@@ -127,6 +129,7 @@ func AccountLogin(opt *forms.LoginForm) (*controller.Session, *validator.Error) 
 			}
 			redisStr, _ = jsoniter.MarshalToString(user)
 			uid = tech.TechId
+			role = controller.ROLE_TEACHER
 		} else {
 			return nil, gtms_error.GetError("sign_in_error")
 		}
@@ -160,6 +163,7 @@ func AccountLogin(opt *forms.LoginForm) (*controller.Session, *validator.Error) 
 			}
 			redisStr, _ = jsoniter.MarshalToString(user)
 			uid = stu.StuNo
+			role = controller.ROLE_STUDENT
 		} else {
 			return nil, gtms_error.GetError("sign_in_error")
 		}
@@ -173,7 +177,7 @@ func AccountLogin(opt *forms.LoginForm) (*controller.Session, *validator.Error) 
 		db.Exec(db.ReplaceSQL("user_session", stringi.Form{
 			"uid":         uid,
 			"token":       accessToken,
-			"role":        controller.ROLE_ADMIN,
+			"role":        role,
 			"update_time": helper.Date("Y-m-d H:i:s"),
 		}))
 	}()
