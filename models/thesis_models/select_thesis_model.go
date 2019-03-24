@@ -1,0 +1,187 @@
+package thesis_models
+
+import (
+	"GTMS/boot"
+	"GTMS/library/controller"
+	"GTMS/library/db"
+	"GTMS/library/gtms_error"
+	"GTMS/library/helper"
+	"GTMS/library/stringi"
+	"GTMS/library/validator"
+	"GTMS/models/account_models"
+	"GTMS/v1/forms"
+	"github.com/astaxie/beego/orm"
+	"strconv"
+)
+
+type SelectedThesis struct {
+	Sid         int64  `orm:"pk" json:"sid"`
+	Uid         string `json:"uid"`
+	Tid         string `json:"tid"`
+	TechId      string `json:"techId"`
+	Confirm     string `json:"confirm"`
+	CreateTime  string `json:"createTime"`
+	ConfirmTime string `json:"confirmTime"`
+}
+
+//教师未确定的论文
+type NotConfirmThesis struct {
+	SelectedThesis         `json:"selectedThesis"`
+	account_models.Student `json:"student"`
+	Thesis                 `json:"thesis"`
+}
+
+//已选题目
+type ConfirmThesis struct {
+	SelectedThesis         `json:"selectedThesis"`
+	account_models.Student `json:"student"`
+	Thesis                 `json:"thesis"`
+	account_models.Teacher `json:"teacher"`
+}
+
+func init() {
+	//需要在init中注册定义的model
+	orm.RegisterModel(new(SelectedThesis))
+}
+
+func SelectThesis(opt *forms.SelectThesisForm, req *controller.Request) *validator.Error {
+	o := boot.GetMasterMySQL()
+	//判断有没有选题(教师未同意可以重选)
+	if o.QueryTable((*SelectedThesis)(nil)).Filter("uid", req.User.StuNo).Filter("confirm__in", 0, 1).Exist() {
+		return gtms_error.GetError("only_select_one")
+	}
+	//根据tid查询论文信息
+	qs := o.QueryTable((*Thesis)(nil))
+	thesis := Thesis{Tid: stringi.ToInt64(opt.Tid)}
+	o.Read(&thesis)
+	if thesis.Status == NotOptional_Status {
+		return gtms_error.GetError("other_selected")
+	}
+	//开启事物
+	o.Begin()
+	_, err1 := o.Insert(&SelectedThesis{
+		Uid:         req.User.StuNo,
+		Tid:         opt.Tid,
+		TechId:      thesis.UpdateUid,
+		Confirm:     Optional_Status,
+		CreateTime:  helper.Date("Y-m-d H:i:s"),
+		ConfirmTime: helper.Date("Y-m-d H:i:s"),
+	})
+	_, err2 := qs.Filter("tid", opt.Tid).Update(orm.Params{
+		"status": NotOptional_Status,
+	})
+	if err1 != nil || err2 != nil {
+		o.Rollback()
+		return gtms_error.GetError("select_thesis_failed")
+	}
+	o.Commit()
+	//发送邮件给教师............
+
+	return &validator.Error{}
+}
+
+func ConfirmSelectedThesis(opt *forms.ConfirmSelectedlThesisForm) *validator.Error {
+	o := boot.GetMasterMySQL()
+	qs := o.QueryTable((*SelectedThesis)(nil))
+	_, err := qs.Filter("sid", opt.Sid).Update(orm.Params{
+		"confirm": opt.Confirm,
+	})
+	if err != nil {
+		return gtms_error.GetError("confirm_error")
+	}
+	//发送邮件给学生....
+
+	return &validator.Error{}
+
+}
+
+func GetNotConfirmThesis(req *controller.Request, page int, pageCount int) (ncThesis []*NotConfirmThesis, total int) {
+	sql := `SELECT tmp.*, s.*
+FROM (SELECT st.*,
+             t.SUBJECT,
+             t.subtopic,
+             t.keyword,
+             t.type,
+             t.source,
+             t.workload,
+             t.degree_difficulty,
+             t.research_direc,
+             t.content,
+             t.update_time,
+             t.STATUS
+      FROM selected_thesis AS st
+             INNER JOIN thesis AS t ON st.tid = t.tid
+      WHERE st.tech_id = :tech_id
+        AND st.confirm = '0') AS tmp
+       INNER JOIN student AS s
+ON tmp.uid = s.stu_no
+LIMIT @start, @pageCount`
+	db.QueryRows(sql, stringi.Form{
+		"tech_id":   req.User.TechId,
+		"start":     strconv.Itoa((page - 1) * pageCount),
+		"pageCount": strconv.Itoa(pageCount),
+	}, &ncThesis)
+	db.QueryRow(`SELECT COUNT(*) FROM selected_thesis WHERE tech_id = :tech_id AND confirm = '0'`, stringi.Form{
+		"tech_id": req.User.TechId,
+	}, &total)
+	return
+}
+
+func SelectedThesisList(page int, pageCount int) (confirmThesis []*ConfirmThesis, total int) {
+	sql := `SELECT temp.*, te.*
+FROM (SELECT tmp.*, s.*
+      FROM (SELECT st.*,
+                   t.SUBJECT,
+                   t.subtopic,
+                   t.keyword,
+                   t.type,
+                   t.source,
+                   t.workload,
+                   t.degree_difficulty,
+                   t.research_direc,
+                   t.content,
+                   t.update_time,
+                   t.STATUS
+            FROM selected_thesis AS st
+                   INNER JOIN thesis AS t ON st.tid = t.tid
+            WHERE st.confirm = '1') AS tmp
+             INNER JOIN student AS s
+      ON tmp.uid = s.stu_no) temp
+       INNER JOIN teacher te ON temp.tech_id = te.tech_id
+LIMIT @start, @pageCount`
+	db.QueryRows(sql, stringi.Form{
+		"start":     strconv.Itoa((page - 1) * pageCount),
+		"pageCount": strconv.Itoa(pageCount),
+	}, &confirmThesis)
+	db.QueryRow(`SELECT COUNT(*) FROM selected_thesis WHERE confirm = '1'`, stringi.Form{
+	}, &total)
+	return
+}
+
+func GetThesis(req *controller.Request) (thesis []*ConfirmThesis) {
+	sql := `SELECT temp.*, te.*
+FROM (SELECT tmp.*, s.*
+      FROM (SELECT st.*,
+                   t.SUBJECT,
+                   t.subtopic,
+                   t.keyword,
+                   t.type,
+                   t.source,
+                   t.workload,
+                   t.degree_difficulty,
+                   t.research_direc,
+                   t.content,
+                   t.update_time,
+                   t.STATUS
+            FROM selected_thesis AS st
+                   INNER JOIN thesis AS t ON st.tid = t.tid
+            WHERE st.confirm = '1') AS tmp
+             INNER JOIN student AS s ON tmp.uid = s.stu_no) temp
+       INNER JOIN teacher te ON temp.tech_id = te.tech_id
+WHERE temp.stu_no = :stu_no
+LIMIT 1`
+	db.QueryRows(sql, stringi.Form{
+		"stu_no": req.User.StuNo,
+	}, &thesis)
+	return
+}

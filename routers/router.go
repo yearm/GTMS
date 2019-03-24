@@ -14,7 +14,7 @@ func init() {
 	beego.Router("/", &index.MainController{}, "get:Index")
 
 	//登录
-	beego.Router("v1/account/login", &account_controllers.AccountController{}, "post:AccountLogin")
+	beego.Router("/v1/account/login", &account_controllers.AccountController{}, "post:AccountLogin")
 
 	//登出
 	beego.Router("/v1/account/logout", &account_controllers.AccountController{}, "delete:AccountLogout")
@@ -26,9 +26,21 @@ func init() {
 	beego.Router("/v1/account", &account_controllers.AccountController{}, "get:AccountList;put:AccountUpdate")
 
 	//发送邮件重置密码
-	beego.Router("v1/account/sendEmail", &account_controllers.ResetPwdController{}, "post:SendEmailToResetPwd")
-	beego.Router("v1/account/resetPwd", &account_controllers.ResetPwdController{}, "put:ResetPwd")
+	beego.Router("/v1/account/sendEmail", &account_controllers.ResetPwdController{}, "post:SendEmailToResetPwd")
+	beego.Router("/v1/account/resetPwd", &account_controllers.ResetPwdController{}, "put:ResetPwd")
 
 	//论文
 	beego.Router("/v1/thesis", &thesis_controllers.ThesisController{}, "get:ThesisList;post:AddThesis;put:UpdateThesis;delete:DelThesis")
+
+	//学生选题
+	beego.Router("/v1/selectThesis/student", &thesis_controllers.SelectThesisController{}, "post:SelectThesis")
+
+	//获取教师未确认的选题、教师确认学生选题(双向选择)
+	beego.Router("/v1/confirmThesis/teacher", &thesis_controllers.SelectThesisController{}, "get:GetNotConfirmThesis;put:ConfirmSelectedThesis")
+
+	//获取所有已选题目
+	beego.Router("/v1/selectedThesis", &thesis_controllers.SelectThesisController{}, "get:SelectedThesisList")
+
+	//获取学生自己已选题目
+	beego.Router("/v1/thesis/myself", &thesis_controllers.SelectThesisController{}, "get:GetThesis")
 }
