@@ -43,4 +43,7 @@ func init() {
 
 	//获取学生自己已选题目
 	beego.Router("/v1/thesis/myself", &thesis_controllers.SelectThesisController{}, "get:GetThesis")
+
+	//获取开放时间
+	beego.Router("/v1/openingTime", &admin_controllers.OpeningTimeController{}, "get:GetOpeningTime;put:UpdateOpeningTime")
 }
