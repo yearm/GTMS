@@ -9,6 +9,7 @@ import (
 	"GTMS/library/stringi"
 	"GTMS/library/validator"
 	"GTMS/models/account_models"
+	"GTMS/models/admin_models"
 	"GTMS/v1/forms"
 	"github.com/astaxie/beego/orm"
 	"strconv"
@@ -46,6 +47,12 @@ func init() {
 
 func SelectThesis(opt *forms.SelectThesisForm, req *controller.Request) *validator.Error {
 	o := boot.GetMasterMySQL()
+	//获取选题开放时间
+	openingTime := admin_models.OpeningTime{Year: stringi.ToInt(helper.Date("Y"))}
+	o.Read(&openingTime)
+	if openingTime.StartTime > helper.Date("Y-m-d H:i:s") || openingTime.EndTime < helper.Date("Y-m-d H:i:s") {
+		return gtms_error.GetError("not_openingTime")
+	}
 	//判断有没有选题(教师未同意可以重选)
 	if o.QueryTable((*SelectedThesis)(nil)).Filter("uid", req.User.StuNo).Filter("confirm__in", 0, 1).Exist() {
 		return gtms_error.GetError("only_select_one")
@@ -82,11 +89,25 @@ func SelectThesis(opt *forms.SelectThesisForm, req *controller.Request) *validat
 
 func ConfirmSelectedThesis(opt *forms.ConfirmSelectedlThesisForm) *validator.Error {
 	o := boot.GetMasterMySQL()
+	//获取选题开放时间
+	openingTime := admin_models.OpeningTime{Year: stringi.ToInt(helper.Date("Y"))}
+	o.Read(&openingTime)
+	if openingTime.StartTime > helper.Date("Y-m-d H:i:s") || openingTime.EndTime < helper.Date("Y-m-d H:i:s") {
+		return gtms_error.GetError("not_openingTime")
+	}
 	qs := o.QueryTable((*SelectedThesis)(nil))
 	_, err := qs.Filter("sid", opt.Sid).Update(orm.Params{
 		"confirm": opt.Confirm,
 	})
-	if err != nil {
+	//如果教师不同意，则该论文重新进入可选状态
+	var err1 error
+	if opt.Confirm == "2" {
+		sql := `UPDATE thesis SET status = '0' WHERE tid = (SELECT tid FROM selected_thesis WHERE sid = :sid)`
+		_, err1 = db.Exec(db.BuildSQL(sql, stringi.Form{
+			"sid": opt.Sid,
+		}))
+	}
+	if err != nil || err1 != nil {
 		return gtms_error.GetError("confirm_error")
 	}
 	//发送邮件给学生....
