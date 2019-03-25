@@ -2,7 +2,6 @@ package boot
 
 import (
 	"GTMS/conf"
-	"crypto/tls"
 	"fmt"
 	"gopkg.in/gomail.v2"
 )
@@ -16,7 +15,7 @@ func SendEmail(receiverAddress string, receiverName string, subject string, body
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", body)
 	d := gomail.NewDialer(cfg.Host, cfg.Port, cfg.UserName, cfg.Password)
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true} //取消证书的验证
+	//d.TLSConfig = &tls.Config{InsecureSkipVerify: true} //取消证书的验证
 	if err = d.DialAndSend(m); err != nil {
 		fmt.Println(err)
 		return
