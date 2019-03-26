@@ -11,12 +11,16 @@ import (
 	"github.com/json-iterator/go"
 	"mime/multipart"
 	"net/http"
+	"os"
 	"strconv"
 )
 
 const (
 	default_page      = "1"
 	default_pageCount = "30"
+	upload_folder     = "/upload/"
+	Opening_report    = "openingReport" //开题报告
+	Thesis            = "thesis"        // 毕业论文
 )
 
 type BaseController struct {
@@ -148,4 +152,22 @@ func (this *BaseController) GetFile(k string) (*multipart.FileHeader, bool) {
 		return nil, false
 	}
 	return files[0], true
+}
+
+//保存上传文件
+func (this *BaseController) SaveFile(fileType string, fromFile string, fileName string) (err error) {
+	openingReportPath := helper.GetRootPath() + upload_folder + Opening_report
+	thesisPath := helper.GetRootPath() + upload_folder + Thesis
+	if fileType == Opening_report {
+		if b, _ := helper.FolderExists(openingReportPath); !b {
+			os.Mkdir(openingReportPath, os.ModePerm)
+		}
+		err = this.SaveToFile(fromFile, openingReportPath+"/"+fileName)
+	} else {
+		if b, _ := helper.FolderExists(thesisPath); !b {
+			os.Mkdir(thesisPath, os.ModePerm)
+		}
+		err = this.SaveToFile(fromFile, thesisPath+"/"+fileName)
+	}
+	return
 }

@@ -29,8 +29,8 @@ func init() {
 	beego.Router("/v1/account/sendEmail", &account_controllers.ResetPwdController{}, "post:SendEmailToResetPwd")
 	beego.Router("/v1/account/resetPwd", &account_controllers.ResetPwdController{}, "put:ResetPwd")
 
-	//论文
-	beego.Router("/v1/thesis", &thesis_controllers.ThesisController{}, "get:ThesisList;post:AddThesis;put:UpdateThesis;delete:DelThesis")
+	//论文信息的增删改查、论文的上传下载
+	beego.Router("/v1/thesis", &thesis_controllers.ThesisController{}, "get:ThesisList;post:AddThesis;put:UpdateThesis;delete:DelThesis;post:UploadThesis")
 
 	//学生选题
 	beego.Router("/v1/selectThesis/student", &thesis_controllers.SelectThesisController{}, "post:SelectThesis")

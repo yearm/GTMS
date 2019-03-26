@@ -32,3 +32,8 @@ type UpdateThesisForm struct {
 	Content          string `form:"content"`
 	Status           string `form:"status"`
 }
+
+//上传论文Form
+type UploadThesisForm struct {
+	ThesisType string `form:"thesisType" valid:"required|switch:openingReport,thesis"`
+}

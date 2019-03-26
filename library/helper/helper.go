@@ -112,3 +112,15 @@ func StructToFormWithClearNilField(obj interface{}, keys stringi.Form) stringi.F
 	}
 	return data
 }
+
+// 判断文件夹是否存在
+func FolderExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}

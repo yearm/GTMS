@@ -8,6 +8,7 @@ import (
 	"GTMS/models/thesis_models"
 	"GTMS/v1/forms"
 	"math"
+	"strings"
 )
 
 type ThesisController struct {
@@ -104,4 +105,43 @@ func (this *ThesisController) ThesisList() {
 		TotalPage:   int(math.Ceil(float64(total) / float64(pageCount))),
 	}
 	this.SuccessWithDataList(thesiss, pageInfo)
+}
+
+//论文上传
+func (this *ThesisController) UploadThesis() {
+	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
+	if this.User.IsGuest {
+		this.RequireLogin()
+		return
+	}
+	//只允许学生上传
+	if this.User.Role != controller.ROLE_STUDENT {
+		this.ErrorResponse(gtms_error.GetError("access_denied"))
+		return
+	}
+	inputs := forms.UploadThesisForm{}
+	if err := this.ParseInput(&inputs); err.Code != 0 {
+		this.ErrorResponse(err)
+		return
+	}
+	file, _ := this.GetFile("file")
+	fileStr := strings.Split(file.Filename, ".")
+	//限制上传格式
+	if fileStr[len(fileStr)-1] != thesis_models.File_Type {
+		this.ErrorResponse(gtms_error.GetError("only_pdf"))
+		return
+	}
+	err, fileName := thesis_models.UploadThesis(&inputs, &this.Request)
+	if err.Code != 0 {
+		this.ErrorResponse(err)
+		return
+	} else {
+		switch inputs.ThesisType {
+		case controller.Opening_report:
+			this.SaveFile(controller.Opening_report, "file", fileName)
+		case controller.Thesis:
+			this.SaveFile(controller.Thesis, "file", fileName)
+		}
+	}
+	this.SuccessWithData(helper.JSON{})
 }
