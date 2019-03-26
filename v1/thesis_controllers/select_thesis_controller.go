@@ -64,8 +64,9 @@ func (this *SelectThesisController) ConfirmSelectedThesis() {
 	this.SuccessWithData(helper.JSON{})
 }
 
-//获取教师未确认的选题
-func (this *SelectThesisController) GetNotConfirmThesis() {
+//获取教师未确认、确认的选题
+func (this *SelectThesisController) GetNotOrConfirmThesis() {
+	confirm := this.GetString("confirm")
 	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
 	if this.User.IsGuest {
 		this.RequireLogin()
@@ -77,7 +78,7 @@ func (this *SelectThesisController) GetNotConfirmThesis() {
 		return
 	}
 	page, pageCount := this.GetPageInfo()
-	ncThesis, total := thesis_models.GetNotConfirmThesis(&this.Request, page, pageCount)
+	ncThesis, total := thesis_models.GetNotOrConfirmThesis(&this.Request, page, pageCount, confirm)
 	pageInfo := controller.PageInfoWithEndPage{
 		CurrentPage: page,
 		IsEndPage:   stringi.Judge(len(ncThesis) < pageCount, "yes", "no"),

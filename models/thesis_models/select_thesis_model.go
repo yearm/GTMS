@@ -126,10 +126,13 @@ func ConfirmSelectedThesis(opt *forms.ConfirmSelectedlThesisForm) *validator.Err
 
 }
 
-func GetNotConfirmThesis(req *controller.Request, page int, pageCount int) (ncThesis []*NotConfirmThesis, total int) {
+func GetNotOrConfirmThesis(req *controller.Request, page int, pageCount int, confirm string) (ncThesis []*NotConfirmThesis, total int) {
+	if confirm == "" { //默认获取已确认的选题
+		confirm = "1"
+	}
 	sql := `SELECT tmp.*, s.*
 FROM (SELECT st.*,
-             t.SUBJECT,
+             t.subject,
              t.subtopic,
              t.keyword,
              t.type,
@@ -138,22 +141,26 @@ FROM (SELECT st.*,
              t.degree_difficulty,
              t.research_direc,
              t.content,
+             t.update_uid,
+             t.update_user,
              t.update_time,
-             t.STATUS
+             t.status
       FROM selected_thesis AS st
              INNER JOIN thesis AS t ON st.tid = t.tid
       WHERE st.tech_id = :tech_id
-        AND st.confirm = '0') AS tmp
+        AND st.confirm = :confirm) AS tmp
        INNER JOIN student AS s
 ON tmp.uid = s.stu_no
 LIMIT @start, @pageCount`
 	db.QueryRows(sql, stringi.Form{
 		"tech_id":   req.User.TechId,
+		"confirm":   confirm,
 		"start":     strconv.Itoa((page - 1) * pageCount),
 		"pageCount": strconv.Itoa(pageCount),
 	}, &ncThesis)
-	db.QueryRow(`SELECT COUNT(*) FROM selected_thesis WHERE tech_id = :tech_id AND confirm = '0'`, stringi.Form{
+	db.QueryRow(`SELECT COUNT(*) FROM selected_thesis WHERE tech_id = :tech_id AND confirm = :confirm`, stringi.Form{
 		"tech_id": req.User.TechId,
+		"confirm": confirm,
 	}, &total)
 	return
 }

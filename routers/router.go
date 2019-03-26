@@ -35,8 +35,8 @@ func init() {
 	//学生选题
 	beego.Router("/v1/selectThesis/student", &thesis_controllers.SelectThesisController{}, "post:SelectThesis")
 
-	//获取教师未确认的选题、教师确认学生选题(双向选择)
-	beego.Router("/v1/confirmThesis/teacher", &thesis_controllers.SelectThesisController{}, "get:GetNotConfirmThesis;put:ConfirmSelectedThesis")
+	//获取教师确认、未确认的选题、教师确认学生选题(双向选择)
+	beego.Router("/v1/confirmThesis/teacher", &thesis_controllers.SelectThesisController{}, "get:GetNotOrConfirmThesis;put:ConfirmSelectedThesis")
 
 	//获取所有已选题目
 	beego.Router("/v1/selectedThesis", &thesis_controllers.SelectThesisController{}, "get:SelectedThesisList")
