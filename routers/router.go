@@ -30,7 +30,10 @@ func init() {
 	beego.Router("/v1/account/resetPwd", &account_controllers.ResetPwdController{}, "put:ResetPwd")
 
 	//论文信息的增删改查、论文的上传下载
-	beego.Router("/v1/thesis", &thesis_controllers.ThesisController{}, "get:ThesisList;post:AddThesis;put:UpdateThesis;delete:DelThesis;post:UploadThesis")
+	beego.Router("/v1/thesis", &thesis_controllers.ThesisController{}, "get:ThesisList;post:AddThesis;put:UpdateThesis;delete:DelThesis")
+
+	//论文的上传下载
+	beego.Router("/v1/thesisFile", &thesis_controllers.ThesisController{}, "post:UploadThesis")
 
 	//学生选题
 	beego.Router("/v1/selectThesis/student", &thesis_controllers.SelectThesisController{}, "post:SelectThesis")
@@ -44,6 +47,6 @@ func init() {
 	//获取学生自己已选题目
 	beego.Router("/v1/thesis/myself", &thesis_controllers.SelectThesisController{}, "get:GetThesis")
 
-	//获取开放时间
+	//获取、修改开放时间
 	beego.Router("/v1/openingTime", &admin_controllers.OpeningTimeController{}, "get:GetOpeningTime;put:UpdateOpeningTime")
 }
