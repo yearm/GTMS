@@ -44,6 +44,16 @@ func (this *AccountController) AccountLogout() {
 	this.SuccessWithData(helper.JSON{})
 }
 
+//获取用户基本信息
+func (this *AccountController) GetUserInfo() {
+	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
+	if this.User.IsGuest {
+		this.RequireLogin()
+		return
+	}
+	this.SuccessWithData(this.User)
+}
+
 //获取账号列表
 func (this *AccountController) AccountList() {
 	role := this.GetString("role")

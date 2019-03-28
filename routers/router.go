@@ -19,6 +19,9 @@ func init() {
 	//登出
 	beego.Router("/v1/account/logout", &account_controllers.AccountController{}, "delete:AccountLogout")
 
+	//用户基本信息
+	beego.Router("/v1/userInfo", &account_controllers.AccountController{}, "get:GetUserInfo")
+
 	//管理员添加删除账号
 	beego.Router("/v1/account", &admin_controllers.AccountManageController{}, "post:AddAccount;delete:DelAccount")
 
