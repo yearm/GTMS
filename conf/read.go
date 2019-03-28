@@ -84,3 +84,7 @@ func GetSmtpConfig() SmtpConfig {
 		Password: password,
 	}
 }
+
+func GetRunMode() string {
+	return RunMode
+}

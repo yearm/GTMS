@@ -2,6 +2,7 @@ package account_models
 
 import (
 	"GTMS/boot"
+	"GTMS/conf"
 	"GTMS/library/controller"
 	"GTMS/library/db"
 	"GTMS/library/gtms_error"
@@ -14,11 +15,18 @@ import (
 )
 
 const (
-	subject = "黄冈师范学院毕业论文管理系统重置密码"
-	url     = "https://www.upcoder.cn/account/resetPwd"
+	subject  = "黄冈师范学院毕业论文管理系统重置密码"
+	dev_url  = "http://localhost:63343/gtms_web/resetPwd.html"
+	prod_url = "https://www.upcoder.cn/resetPwd.html"
 )
 
 func SendEmailToResetPwd(opt *forms.SendEmailToResetPwd) *validator.Error {
+	var url string
+	if conf.GetRunMode() == "dev" {
+		url = dev_url
+	} else {
+		url = prod_url
+	}
 	sql := `SELECT * FROM @table WHERE @ukey = :uid`
 	switch opt.Role {
 	case controller.ROLE_ADMIN:
