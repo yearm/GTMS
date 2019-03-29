@@ -7,7 +7,6 @@ import (
 	"GTMS/library/stringi"
 	"GTMS/models/thesis_models"
 	"GTMS/v1/forms"
-	"math"
 	"strings"
 )
 
@@ -102,7 +101,7 @@ func (this *ThesisController) ThesisList() {
 	pageInfo := controller.PageInfoWithEndPage{
 		CurrentPage: page,
 		IsEndPage:   stringi.Judge(len(thesiss) < pageCount, "yes", "no"),
-		TotalPage:   int(math.Ceil(float64(total) / float64(pageCount))),
+		Total:   total,
 	}
 	this.SuccessWithDataList(thesiss, pageInfo)
 }

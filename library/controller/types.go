@@ -72,7 +72,7 @@ type StuInfo struct {
 type PageInfoWithEndPage struct {
 	CurrentPage int    `json:"currentPage"`
 	IsEndPage   string `json:"isEndPage"`
-	TotalPage   int    `json:"totalPage"`
+	Total   int    `json:"total"`
 }
 
 //格式化admin字段
@@ -82,7 +82,7 @@ var FormatAdmin = map[string]string{
 	"AdminName": "admin_name",
 	"AdminSex":  "admin_sex",
 	"Phone":     "phone",
-	"email":     "email",
+	"Email":     "email",
 }
 
 //格式化student字段

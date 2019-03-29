@@ -242,7 +242,7 @@ func AccountList(role string, page int, pageCount int) (admins []*Admin, techs [
 
 func UpdateAdmin(opt *forms.UpdateAdminForm) *validator.Error {
 	sql := `UPDATE @table SET @value WHERE admin_id = :admin_id`
-	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
+	form := helper.StructToFormWithClearNilField(*opt, controller.FormatAdmin)
 	if form["pwd"] != "" {
 		form["pwd"], _ = helper.HashedPassword(opt.Pwd)
 		//更新密码会删除token
@@ -284,7 +284,7 @@ func UpdateStudent(opt *forms.UpdateStudentForm) *validator.Error {
 
 func UpdateTeacher(opt *forms.UpdateTeacherForm) *validator.Error {
 	sql := `UPDATE @table SET @value WHERE tech_id = :tech_id`
-	form := helper.StructToFormWithClearNilField(*opt, controller.FormatStudent)
+	form := helper.StructToFormWithClearNilField(*opt, controller.FormatTeacher)
 	if form["pwd"] != "" {
 		form["pwd"], _ = helper.HashedPassword(opt.Pwd)
 		//更新密码会删除token

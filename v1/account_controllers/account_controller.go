@@ -7,7 +7,6 @@ import (
 	"GTMS/library/stringi"
 	"GTMS/models/account_models"
 	"GTMS/v1/forms"
-	"math"
 )
 
 type AccountController struct {
@@ -69,19 +68,19 @@ func (this *AccountController) AccountList() {
 		this.SuccessWithDataList(admins, controller.PageInfoWithEndPage{
 			CurrentPage: page,
 			IsEndPage:   stringi.Judge(len(admins) < pageCount, "yes", "no"),
-			TotalPage:   int(math.Ceil(float64(total) / float64(pageCount))),
+			Total:   total,
 		})
 	case controller.ROLE_TEACHER:
 		this.SuccessWithDataList(techs, controller.PageInfoWithEndPage{
 			CurrentPage: page,
 			IsEndPage:   stringi.Judge(len(techs) < pageCount, "yes", "no"),
-			TotalPage:   int(math.Ceil(float64(total) / float64(pageCount))),
+			Total:   total,
 		})
 	case controller.ROLE_STUDENT:
 		this.SuccessWithDataList(stus, controller.PageInfoWithEndPage{
 			CurrentPage: page,
 			IsEndPage:   stringi.Judge(len(stus) < pageCount, "yes", "no"),
-			TotalPage:   int(math.Ceil(float64(total) / float64(pageCount))),
+			Total:   total,
 		})
 	default:
 		this.SuccessWithDataList(helper.JSON{}, controller.PageInfoWithEndPage{})

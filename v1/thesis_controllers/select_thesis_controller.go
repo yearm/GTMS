@@ -7,7 +7,6 @@ import (
 	"GTMS/library/stringi"
 	"GTMS/models/thesis_models"
 	"GTMS/v1/forms"
-	"math"
 )
 
 type SelectThesisController struct {
@@ -82,7 +81,7 @@ func (this *SelectThesisController) GetNotOrConfirmThesis() {
 	pageInfo := controller.PageInfoWithEndPage{
 		CurrentPage: page,
 		IsEndPage:   stringi.Judge(len(ncThesis) < pageCount, "yes", "no"),
-		TotalPage:   int(math.Ceil(float64(total) / float64(pageCount))),
+		Total:   total,
 	}
 	this.SuccessWithDataList(ncThesis, pageInfo)
 }
@@ -99,7 +98,7 @@ func (this *SelectThesisController) SelectedThesisList() {
 	pageInfo := controller.PageInfoWithEndPage{
 		CurrentPage: page,
 		IsEndPage:   stringi.Judge(len(confirmThesis) < pageCount, "yes", "no"),
-		TotalPage:   int(math.Ceil(float64(total) / float64(pageCount))),
+		Total:   total,
 	}
 	this.SuccessWithDataList(confirmThesis, pageInfo)
 }

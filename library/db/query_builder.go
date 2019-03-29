@@ -140,13 +140,12 @@ func ReplaceSQL(tableName string, data stringi.Form) string {
 	return BuildSQL(sql, data)
 }
 
-func DeleteSQL(tableName string, field string, data []string) string {
-	valuesString := strings.Join(data, ", ")
-	sql := `DELETE FROM {tableName} WHERE {field} IN ({values})`
+func DeleteSQL(tableName string, field string, data string) string {
+	sql := `DELETE FROM {tableName} WHERE {field} IN ({value})`
 	sql = stringi.Build(sql, stringi.Form{
 		"tableName": tableName,
 		"field":     field,
-		"values":    valuesString,
+		"value":     data,
 	})
 	return sql
 }
