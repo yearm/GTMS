@@ -25,7 +25,7 @@ type Admin struct {
 }
 
 type Teacher struct {
-	TechId            string `orm:"pk" json:"tech_id"`
+	TechId            string `orm:"pk" json:"techId"`
 	Pwd               string `json:"-"`
 	TechName          string `json:"techName"`
 	TechSex           string `json:"techSex"`
