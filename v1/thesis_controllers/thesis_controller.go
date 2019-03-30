@@ -41,6 +41,7 @@ func (this *ThesisController) AddThesis() {
 
 //删除论文
 func (this *ThesisController) DelThesis() {
+	tid := this.GetString("tid")
 	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
 	if this.User.IsGuest {
 		this.RequireLogin()
@@ -51,12 +52,7 @@ func (this *ThesisController) DelThesis() {
 		this.ErrorResponse(gtms_error.GetError("access_denied"))
 		return
 	}
-	inputs := forms.DelThesisForm{}
-	if err := this.ParseInput(&inputs); err.Code != 0 {
-		this.ErrorResponse(err)
-		return
-	}
-	err := thesis_models.DelThesis(&inputs)
+	err := thesis_models.DelThesis(tid)
 	if err.Code != 0 {
 		this.ErrorResponse(err)
 		return
@@ -101,7 +97,7 @@ func (this *ThesisController) ThesisList() {
 	pageInfo := controller.PageInfoWithEndPage{
 		CurrentPage: page,
 		IsEndPage:   stringi.Judge(len(thesiss) < pageCount, "yes", "no"),
-		Total:   total,
+		Total:       total,
 	}
 	this.SuccessWithDataList(thesiss, pageInfo)
 }

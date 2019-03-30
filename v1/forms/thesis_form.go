@@ -13,11 +13,6 @@ type AddThesisForm struct {
 	Content          string `form:"content"`
 }
 
-//删除论文Form
-type DelThesisForm struct {
-	Tid string `form:"tid" valid:"required"`
-}
-
 //更新论文信息Form
 type UpdateThesisForm struct {
 	Tid              string `form:"tid" valid:"required"`

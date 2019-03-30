@@ -75,9 +75,9 @@ func AddThesis(req *controller.Request, opt *forms.AddThesisForm) *validator.Err
 	return &validator.Error{}
 }
 
-func DelThesis(opt *forms.DelThesisForm) *validator.Error {
+func DelThesis(tid string) *validator.Error {
 	o := boot.GetMasterMySQL()
-	o.Delete(&Thesis{Tid: stringi.ToInt64(opt.Tid)})
+	o.Delete(&Thesis{Tid: stringi.ToInt64(tid)})
 	return &validator.Error{}
 }
 
@@ -102,7 +102,7 @@ func UpdateThesis(opt *forms.UpdateThesisForm, req *controller.Request) *validat
 func ThesisList(page int, pageCount int) (thesiss []*Thesis, total int) {
 	o := boot.GetSlaveMySQL()
 	qs := o.QueryTable((*Thesis)(nil))
-	_, err := qs.Filter("status", Optional_Status).Limit(pageCount, (page-1)*pageCount).All(&thesiss)
+	_, err := qs.Limit(pageCount, (page-1)*pageCount).All(&thesiss)
 	if err != nil {
 		return
 	}

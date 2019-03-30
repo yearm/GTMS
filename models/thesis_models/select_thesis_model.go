@@ -25,19 +25,30 @@ type SelectedThesis struct {
 	ConfirmTime string `json:"confirmTime"`
 }
 
-//教师未确定的论文
+//教师确定、未确定的论文
 type NotConfirmThesis struct {
-	SelectedThesis         `json:"selectedThesis"`
-	account_models.Student `json:"student"`
-	Thesis                 `json:"thesis"`
+	Sid           string `json:"sid"`
+	StuNo         string `json:"stuNo"`
+	StuName       string `json:"stuName"`
+	Major         string `json:"major"`
+	Subject       string `json:"subject"`
+	Source        string `json:"source"`
+	Type          string `json:"type"`
+	OpeningReport string `json:"openingReport"`
+	Thesis        string `json:"thesis"`
 }
 
 //已选题目
 type ConfirmThesis struct {
-	SelectedThesis         `json:"selectedThesis"`
-	account_models.Student `json:"student"`
-	Thesis                 `json:"thesis"`
-	account_models.Teacher `json:"teacher"`
+	StuNo     string `json:"stuNo"`
+	StuName   string `json:"stuName"`
+	Major     string `json:"major"`
+	Subject   string `json:"subject"`
+	Source    string `json:"source"`
+	Type      string `json:"type"`
+	TechName  string `json:"techName"`
+	JobTitle  string `json:"jobTitle"`
+	Education string `json:"education"`
 }
 
 const (
@@ -95,7 +106,7 @@ func SelectThesis(opt *forms.SelectThesisForm, req *controller.Request) *validat
 			黄冈师范学院毕业论文管理系统<br><br>
 			注:此邮件为本系统所发，非对方邮箱所发，所以请勿回邮。
 		</h4>`
-	boot.SendEmail(tech.Email, thesis.UpdateUser, subject, body)
+	go boot.SendEmail(tech.Email, thesis.UpdateUser, subject, body)
 	return &validator.Error{}
 }
 
@@ -130,7 +141,8 @@ func GetNotOrConfirmThesis(req *controller.Request, page int, pageCount int, con
 	if confirm == "" { //默认获取已确认的选题
 		confirm = "1"
 	}
-	sql := `SELECT tmp.*, s.*
+	sql := `SELECT tp.*,tf.* FROM thesis_file tf RIGHT JOIN(
+SELECT tmp.*, s.*
 FROM (SELECT st.*,
              t.subject,
              t.subtopic,
@@ -150,7 +162,7 @@ FROM (SELECT st.*,
       WHERE st.tech_id = :tech_id
         AND st.confirm = :confirm) AS tmp
        INNER JOIN student AS s
-ON tmp.uid = s.stu_no
+ON tmp.uid = s.stu_no) tp ON tf.uid = tp.uid
 LIMIT @start, @pageCount`
 	db.QueryRows(sql, stringi.Form{
 		"tech_id":   req.User.TechId,
@@ -169,7 +181,7 @@ func SelectedThesisList(page int, pageCount int) (confirmThesis []*ConfirmThesis
 	sql := `SELECT temp.*, te.*
 FROM (SELECT tmp.*, s.*
       FROM (SELECT st.*,
-                   t.SUBJECT,
+                   t.subject,
                    t.subtopic,
                    t.keyword,
                    t.type,
@@ -179,7 +191,7 @@ FROM (SELECT tmp.*, s.*
                    t.research_direc,
                    t.content,
                    t.update_time,
-                   t.STATUS
+                   t.status
             FROM selected_thesis AS st
                    INNER JOIN thesis AS t ON st.tid = t.tid
             WHERE st.confirm = '1') AS tmp
@@ -200,7 +212,7 @@ func GetThesis(req *controller.Request) (thesis []*ConfirmThesis) {
 	sql := `SELECT temp.*, te.*
 FROM (SELECT tmp.*, s.*
       FROM (SELECT st.*,
-                   t.SUBJECT,
+                   t.subject,
                    t.subtopic,
                    t.keyword,
                    t.type,
@@ -210,7 +222,7 @@ FROM (SELECT tmp.*, s.*
                    t.research_direc,
                    t.content,
                    t.update_time,
-                   t.STATUS
+                   t.status
             FROM selected_thesis AS st
                    INNER JOIN thesis AS t ON st.tid = t.tid
             WHERE st.confirm = '1') AS tmp
