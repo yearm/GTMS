@@ -81,7 +81,7 @@ func (this *SelectThesisController) GetNotOrConfirmThesis() {
 	pageInfo := controller.PageInfoWithEndPage{
 		CurrentPage: page,
 		IsEndPage:   stringi.Judge(len(ncThesis) < pageCount, "yes", "no"),
-		Total:   total,
+		Total:       total,
 	}
 	this.SuccessWithDataList(ncThesis, pageInfo)
 }
@@ -98,7 +98,7 @@ func (this *SelectThesisController) SelectedThesisList() {
 	pageInfo := controller.PageInfoWithEndPage{
 		CurrentPage: page,
 		IsEndPage:   stringi.Judge(len(confirmThesis) < pageCount, "yes", "no"),
-		Total:   total,
+		Total:       total,
 	}
 	this.SuccessWithDataList(confirmThesis, pageInfo)
 }
@@ -108,6 +108,11 @@ func (this *SelectThesisController) GetThesis() {
 	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
 	if this.User.IsGuest {
 		this.RequireLogin()
+		return
+	}
+	//只允许学生访问
+	if this.User.Role != controller.ROLE_STUDENT {
+		this.ErrorResponse(gtms_error.GetError("access_denied"))
 		return
 	}
 	thesis := thesis_models.GetThesis(&this.Request)
