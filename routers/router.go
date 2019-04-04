@@ -39,7 +39,10 @@ func init() {
 	beego.Router("/v1/thesis", &thesis_controllers.ThesisController{}, "get:ThesisList;post:AddThesis;put:UpdateThesis;delete:DelThesis")
 
 	//论文的上传下载
-	beego.Router("/v1/thesisFile", &thesis_controllers.ThesisController{}, "post:UploadThesis")
+	beego.Router("/v1/thesisFile", &thesis_controllers.ThesisController{}, "get:DownloadThesis;post:UploadThesis")
+
+	//论文预览
+	beego.Router("/v1/thesisPreview", &thesis_controllers.ThesisController{}, "get:PreviewThesis")
 
 	//学生选题
 	beego.Router("/v1/selectThesis/student", &thesis_controllers.SelectThesisController{}, "post:SelectThesis")

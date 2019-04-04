@@ -40,15 +40,25 @@ type NotConfirmThesis struct {
 
 //已选题目
 type ConfirmThesis struct {
-	StuNo     string `json:"stuNo"`
-	StuName   string `json:"stuName"`
-	Major     string `json:"major"`
-	Subject   string `json:"subject"`
-	Source    string `json:"source"`
-	Type      string `json:"type"`
-	TechName  string `json:"techName"`
-	JobTitle  string `json:"jobTitle"`
-	Education string `json:"education"`
+	StuNo            string `json:"stuNo"`
+	StuName          string `json:"stuName"`
+	Major            string `json:"major"`
+	Subject          string `json:"subject"`
+	Subtopic         string `json:"subtopic"`
+	KeyWord          string `json:"keyWord"`
+	Type             string `json:"type"`
+	Source           string `json:"source"`
+	Workload         string `json:"workload"`
+	DegreeDifficulty string `json:"degreeDifficulty"`
+	ResearchDirec    string `json:"researchDirec"`
+	Content          string `json:"content"`
+	TechName         string `json:"techName"`
+	JobTitle         string `json:"jobTitle"`
+	Education        string `json:"education"`
+	OpeningReport    string `json:"openingReport"`
+	ReportTime       string `json:"reportTime"`
+	Thesis           string `json:"thesis"`
+	ThesisTime       string `json:"thesisTime"`
 }
 
 const (
@@ -209,7 +219,8 @@ LIMIT @start, @pageCount`
 }
 
 func GetThesis(req *controller.Request) (thesis []*ConfirmThesis) {
-	sql := `SELECT temp.*, te.*
+	sql := `SELECT * FROM thesis_file AS tf RIGHT JOIN(
+SELECT temp.*, te.tech_name,te.tech_sex,te.degree,te.research_direction,te.job_title,te.job,te.instruct_nums,te.instruct_major
 FROM (SELECT tmp.*, s.*
       FROM (SELECT st.*,
                    t.subject,
@@ -228,7 +239,7 @@ FROM (SELECT tmp.*, s.*
             WHERE st.confirm = '1') AS tmp
              INNER JOIN student AS s ON tmp.uid = s.stu_no) temp
        INNER JOIN teacher te ON temp.tech_id = te.tech_id
-WHERE temp.stu_no = :stu_no
+WHERE temp.stu_no = :stu_no) AS tp ON tf.uid = tp.uid
 LIMIT 1`
 	db.QueryRows(sql, stringi.Form{
 		"stu_no": req.User.StuNo,

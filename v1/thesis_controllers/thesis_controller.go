@@ -1,12 +1,14 @@
 package thesis_controllers
 
 import (
+	"GTMS/conf"
 	"GTMS/library/controller"
 	"GTMS/library/gtms_error"
 	"GTMS/library/helper"
 	"GTMS/library/stringi"
 	"GTMS/models/thesis_models"
 	"GTMS/v1/forms"
+	"os/exec"
 	"strings"
 )
 
@@ -136,6 +138,64 @@ func (this *ThesisController) UploadThesis() {
 			this.SaveFile(controller.Opening_report, "file", fileName)
 		case controller.Thesis:
 			this.SaveFile(controller.Thesis, "file", fileName)
+		}
+	}
+	this.SuccessWithData(helper.JSON{})
+}
+
+//论文下载
+func (this *ThesisController) DownloadThesis() {
+	fileName := this.GetString("fileName")
+	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
+	if this.User.IsGuest {
+		this.RequireLogin()
+		return
+	}
+	filePath := helper.GetRootPath() + "/upload/"
+	fileStr := strings.Split(fileName, "_")
+	if fileStr[1] == "开题报告" {
+		filePath = filePath + controller.Opening_report + "/"
+	} else {
+		filePath = filePath + controller.Thesis + "/"
+	}
+	if b, err := helper.FolderExists(filePath + fileName); !b || err != nil {
+		this.ErrorResponse(gtms_error.GetError("file_not_exits"))
+		return
+	}
+	this.Ctx.Output.Download(filePath + fileName)
+}
+
+//论文预览
+func (this *ThesisController) PreviewThesis() {
+	fileName := this.GetString("fileName")
+	this.User = this.GetUser(this.Ctx.Request.Header.Get("X-Access-Token"))
+	if this.User.IsGuest {
+		this.RequireLogin()
+		return
+	}
+	filePath := helper.GetRootPath() + "/upload/"
+	fileStr := strings.Split(fileName, "_")
+	if fileStr[1] == "开题报告" {
+		filePath = filePath + controller.Opening_report + "/"
+	} else {
+		filePath = filePath + controller.Thesis + "/"
+	}
+	if b, err := helper.FolderExists(filePath + fileName); !b || err != nil {
+		this.ErrorResponse(gtms_error.GetError("file_not_exits"))
+		return
+	}
+	//复制文件到gtms_web/pdfjs/web
+	if conf.GetRunMode() == "dev" {
+		cmd := exec.Command("/bin/sh", "-c", `cp `+filePath+fileName+` ~/WebstormProjects/gtms_web/pdfjs/web/`)
+		if _, err := cmd.Output(); err != nil {
+			this.ErrorResponse(gtms_error.GetError("preview_failed"))
+			return
+		}
+	} else {
+		cmd := exec.Command("/bin/sh", "-c", `cp `+filePath+fileName+` /www/gtms_web/pdfjs/web/`)
+		if _, err := cmd.Output(); err != nil {
+			this.ErrorResponse(gtms_error.GetError("preview_failed"))
+			return
 		}
 	}
 	this.SuccessWithData(helper.JSON{})
