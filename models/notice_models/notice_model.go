@@ -17,7 +17,7 @@ type Notice struct {
 	Content    string `json:"content"`
 	Attachment string `json:"attachment"`
 	View       int    `json:"view"`
-	Uid        string `json:"uid"`
+	CreateUser string `json:"createUser"`
 	CreateTime string `json:"createTime"`
 }
 
@@ -45,7 +45,7 @@ func AddNotice(req *controller.Request, opt *forms.AddNoticeForm, attachment str
 		Content:    opt.Content,
 		Attachment: attachment,
 		View:       0,
-		Uid:        req.User.AdminId,
+		CreateUser: req.User.AdminName,
 		CreateTime: helper.Date("Y-m-d H:i:s"),
 	})
 	if err != nil {
