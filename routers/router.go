@@ -5,6 +5,7 @@ import (
 	"GTMS/v1/account_controllers"
 	"GTMS/v1/admin_controllers"
 	"GTMS/v1/index"
+	"GTMS/v1/notice_controllers"
 	"GTMS/v1/thesis_controllers"
 	"github.com/astaxie/beego"
 )
@@ -58,4 +59,13 @@ func init() {
 
 	//获取、修改开放时间
 	beego.Router("/v1/openingTime", &admin_controllers.OpeningTimeController{}, "get:GetOpeningTime;put:UpdateOpeningTime")
+
+	//公告管理
+	beego.Router("/v1/notice", &notice_controllers.NoticeController{}, "get:NoticeDetail;post:AddNotice;delete:NoticeDel")
+
+	//公告列表
+	beego.Router("/v1/notice/list", &notice_controllers.NoticeController{}, "get:NoticeList")
+
+	//下载公告附件
+	beego.Router("/v1/noticeFile", &notice_controllers.NoticeController{}, "get:DownloadAttach")
 }

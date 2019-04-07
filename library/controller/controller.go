@@ -21,6 +21,7 @@ const (
 	upload_folder     = "/upload/"
 	Opening_report    = "openingReport" //开题报告
 	Thesis            = "thesis"        // 毕业论文
+	Notice_attach     = "attachment"    //论文附件
 )
 
 type BaseController struct {
@@ -158,16 +159,22 @@ func (this *BaseController) GetFile(k string) (*multipart.FileHeader, bool) {
 func (this *BaseController) SaveFile(fileType string, fromFile string, fileName string) (err error) {
 	openingReportPath := helper.GetRootPath() + upload_folder + Opening_report
 	thesisPath := helper.GetRootPath() + upload_folder + Thesis
+	attachPath := helper.GetRootPath() + upload_folder + Notice_attach
 	if fileType == Opening_report {
 		if b, _ := helper.FolderExists(openingReportPath); !b {
 			os.Mkdir(openingReportPath, os.ModePerm)
 		}
 		err = this.SaveToFile(fromFile, openingReportPath+"/"+fileName)
-	} else {
+	} else if fileType == Thesis {
 		if b, _ := helper.FolderExists(thesisPath); !b {
 			os.Mkdir(thesisPath, os.ModePerm)
 		}
 		err = this.SaveToFile(fromFile, thesisPath+"/"+fileName)
+	} else {
+		if b, _ := helper.FolderExists(attachPath); !b {
+			os.Mkdir(attachPath, os.ModePerm)
+		}
+		err = this.SaveToFile(fromFile, attachPath+"/"+fileName)
 	}
 	return
 }
