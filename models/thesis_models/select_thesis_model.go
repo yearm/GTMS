@@ -79,7 +79,7 @@ func SelectThesis(opt *forms.SelectThesisForm, req *controller.Request) *validat
 		return gtms_error.GetError("not_openingTime")
 	}
 	//判断有没有选题(教师未同意可以重选)
-	if o.QueryTable((*SelectedThesis)(nil)).Filter("uid", req.User.StuNo).Filter("confirm__in", 0, 1).Exist() {
+	if o.QueryTable((*SelectedThesis)(nil)).Filter("uid", req.User.StuNo).Filter("confirm__in", "0", "1").Exist() {
 		return gtms_error.GetError("only_select_one")
 	}
 	//根据tid查询论文信息
