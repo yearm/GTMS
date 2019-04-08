@@ -9,6 +9,8 @@ import (
 	"GTMS/library/validator"
 	"GTMS/v1/forms"
 	"github.com/astaxie/beego/orm"
+	"os"
+	"strings"
 )
 
 type Notice struct {
@@ -29,7 +31,7 @@ func init() {
 func NoticeList(page int, pageCount int) (notices []*Notice, total int) {
 	o := boot.GetSlaveMySQL()
 	qs := o.QueryTable((*Notice)(nil))
-	_, err := qs.Limit(pageCount, (page-1)*pageCount).All(&notices)
+	_, err := qs.Limit(pageCount, (page-1)*pageCount).OrderBy("-create_time").All(&notices)
 	if err != nil {
 		return
 	}
@@ -55,6 +57,15 @@ func AddNotice(req *controller.Request, opt *forms.AddNoticeForm, attachment str
 }
 
 func NoticeDel(nid string) *validator.Error {
+	client := boot.GetSlaveMySQL()
+	notice := Notice{Nid: stringi.ToInt64(nid)}
+	client.Read(&notice)
+	attachArr := strings.Split(notice.Attachment, ",")
+	filePath := helper.GetRootPath() + "/upload/" + controller.Notice_attach + "/"
+	for _, v := range attachArr {
+		//删除附件
+		os.Remove(filePath + v)
+	}
 	o := boot.GetMasterMySQL()
 	o.Delete(&Notice{Nid: stringi.ToInt64(nid)})
 	return &validator.Error{}
